@@ -58,6 +58,8 @@ class Warpdrive {
     public function load_modules() {
         // Include purge cache module
         include(BASE."purge-cache/purge-cache.php");
+        // Include read logs module
+        include(BASE."read-logs/read-logs.php");
     }
 
     /**
