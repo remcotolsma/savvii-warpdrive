@@ -33,8 +33,6 @@ class WarpdriveReadLogs {
 
     public function readlogs_page() {
         // Show contents
-        echo "<h1 style='background: #DEF; padding: 5px;'>It works! :D</h1>";
-
         echo '<h2>'.__('Read logs', 'warpdrive').'</h2>';
         echo '
         <style type="text/css">
@@ -49,19 +47,16 @@ class WarpdriveReadLogs {
         <table id="warpdrive-readlogs-head">
             <tr>
                 <th>'.__('Log', 'warpdrive').'</th>
-                <th>'.__('Full log', 'warpdrive').'</th>
                 <th>'.__('Last lines in the file', 'warpdrive').'</th>
             </tr>
             <tr>
                 <td>'.__('Access log', 'warpdrive').'</td>
-                <td><a href="'.admin_url('admin.php?page=warpdrive_readlogs&file=access&lines=-1').'" >'.__('Full access log', 'warpdrive').'</a></td>
                 <td>
                     <a href="'.admin_url('admin.php?page=warpdrive_readlogs&file=access&lines=10').'">'.__('10 lines', 'warpdrive').'</a> &nbsp;
                     <a href="'.admin_url('admin.php?page=warpdrive_readlogs&file=access&lines=100').'" >'.__('100 lines', 'warpdrive').'</a>
             </tr>
             <tr>
                 <td>'.__('Error log', 'warpdrive').'</td>
-                <td><a href="'.admin_url('admin.php?page=warpdrive_readlogs&file=error&lines=-1').'" >'.__('Full error log', 'warpdrive').'</a></td>
                 <td>
                     <a href="'.admin_url('admin.php?page=warpdrive_readlogs&file=error&lines=10').'">'.__('10 lines', 'warpdrive').'</a> &nbsp;
                     <a href="'.admin_url('admin.php?page=warpdrive_readlogs&file=error&lines=100').'" >'.__('100 lines', 'warpdrive').'</a>
@@ -84,7 +79,6 @@ class WarpdriveReadLogs {
 
         $lines = 10;
         switch($_GET['lines']) {
-            case '-1':
             case '10':
             case '100':
                 $lines = $_GET['lines']+0;
@@ -96,8 +90,7 @@ class WarpdriveReadLogs {
             // Remove last entry (it is empty)
             array_pop($file_lines);
             // Get slice of array we want
-            if ($lines > 0)
-                $file_lines = array_slice($file_lines, -1 * $lines);
+            $file_lines = array_slice($file_lines, -1 * $lines);
 
             echo '<div style="font-size: 2em; margin-top: 1em;">'.$name.'</div>';
             echo '<ol>';
