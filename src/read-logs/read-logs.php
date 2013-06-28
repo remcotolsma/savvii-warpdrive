@@ -91,13 +91,19 @@ class WarpdriveReadLogs {
             array_pop($file_lines);
             // Get slice of array we want
             $file_lines = array_slice($file_lines, -1 * $lines);
+            $total_lines = count($file_lines);
 
             echo '<div style="font-size: 2em; margin-top: 1em;">'.$name.'</div>';
-            echo '<ol>';
-            foreach ($file_lines as $line) {
-                echo "<li>$line</li>";
+            if ($total_lines) {
+                echo '<ol>';
+                foreach ($file_lines as $line) {
+                    echo "<li>$line</li>";
+                }
+                echo '</ol>';
+            } else {
+                echo '<p style="padding:  5px; color: #D00;">'.__('No content in log', 'warpdrive').'</p>';
             }
-            echo '</ol>';
+
         } else {
             echo '<p style="color: #D00; font-weight: bold;">'.__('File not found! Please contact support.', 'warpdrive').'</p>';
         }
