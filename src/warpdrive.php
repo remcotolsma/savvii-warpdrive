@@ -9,3 +9,7 @@
  * License: All rights remain with Savvii
  */
 
+define('BASE', plugin_dir_path(__FILE__));
+
+// Purge link sub-plugin
+include(BASE."purge-cache/purge-cache.php");
