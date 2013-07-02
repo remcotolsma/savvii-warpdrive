@@ -66,7 +66,7 @@ class Warpdrive {
      * Create admin menu item
      */
     public function admin_menu_init() {
-        add_menu_page( __('Savvii', 'warpdrive'), __('Savvii', 'warpdrive'), 'manage_options', 'warpdrive_dashboard', array($this, 'config_page'));
+        add_menu_page( __('Savvii', 'warpdrive'), __('Savvii', 'warpdrive'), 'manage_options', 'warpdrive_dashboard', array($this, 'dashboard_page'));
     }
 
     /**
@@ -96,7 +96,7 @@ class Warpdrive {
         return $order;
     }
 
-    public function config_page() {
+    public function dashboard_page() {
 
     }
 }
