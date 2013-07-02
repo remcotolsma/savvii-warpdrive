@@ -47,7 +47,7 @@ class Warpdrive {
      */
     function Warpdrive() {
         // Add plugin to menu and put it on top
-        add_action('admin_menu', array($this, 'admin_menu_init'), 999);
+        add_action('admin_menu', array($this, 'admin_menu_init'));
         add_filter('custom_menu_order', array($this, 'admin_custom_menu_order'));
         add_filter('menu_order', array($this, 'admin_menu_order'));
     }
@@ -103,4 +103,4 @@ class Warpdrive {
 
 
 add_action('init', array('Warpdrive', 'init'));
-add_action('plugins_loaded', array('Warpdrive', 'load_modules'), 100);
+add_action('plugins_loaded', array('Warpdrive', 'load_modules'));
