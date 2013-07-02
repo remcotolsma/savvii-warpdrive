@@ -24,7 +24,7 @@ class WarpdriveReadLogs {
      */
     public function WarpdriveReadLogs() {
         // Add module menu items to warpdrive menu
-        add_action('admin_menu', array($this, 'admin_menu_init'), 1000);
+        add_action('admin_menu', array($this, 'admin_menu_init'));
     }
 
     public function admin_menu_init() {
@@ -67,10 +67,10 @@ class WarpdriveReadLogs {
         $name = null;
         if ($_GET['file'] == "access") {
             $name = __('Access log', 'warpdrive');
-            $file = BASE . "../../../../log/access.log";
+            $file = BASE . "../../../log/access.log";
         } else if($_GET['file'] == "error") {
             $name = __('Error log', 'warpdrive');
-            $file = BASE . "../../../../log/error.log";
+            $file = BASE . "../../../log/error.log";
         }
 
         // No file selected, quit
