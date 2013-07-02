@@ -4,11 +4,11 @@ then
 	while true
 	do
 		# rsync - recursive, skip on checksum, human readable, compress, verbose
-		rsync -rchzv src/ linode:/var/nginx/wp-dev/web/wp-content/plugins/warpdrive/
+		rsync -rchzv src/ linode:/var/nginx/wp-dev/web/wp-content/mu-plugins/
 		# Sleep 1s
 		sleep 2
 	done
 else
 	# rsync - once, skip on checksum, human readable, compress, verbose
-	rsync -rchzv src/ linode:/var/nginx/wp-dev/web/wp-content/plugins/warpdrive/
+	rsync -rchzv src/ linode:/var/nginx/wp-dev/web/wp-content/mu-plugins/
 fi
