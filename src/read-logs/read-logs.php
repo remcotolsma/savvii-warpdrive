@@ -108,10 +108,6 @@ class WarpdriveReadLogs {
             echo '<p style="color: #D00; font-weight: bold;">'.__('File not found! Please contact support.', 'warpdrive').'</p>';
         }
     }
-
-    public function readlogs_css() {
-
-    }
 }
 
 add_action('init', array('WarpdriveReadLogs', 'init'));
