@@ -60,6 +60,8 @@ class Warpdrive {
         include(BASE."warpdrive/purge-cache.php");
         // Include read logs module
         include(BASE."warpdrive/read-logs.php");
+        // Include limit login attempts
+        include(BASE."warpdrive/limit-login-attempts.php");
     }
 
     /**
