@@ -10,7 +10,7 @@
  */
 
 define('BASE', plugin_dir_path(__FILE__));
-
+define('WARPDRIVE_EVVII_TOKEN', 'warpdrive_evvii_token');
 
 class Warpdrive {
 
@@ -52,15 +52,24 @@ class Warpdrive {
         add_filter('menu_order', array($this, 'admin_menu_order'));
     }
 
+    public function get_option($name, $default=null) {
+        return $this->isMultisite() ?
+            get_site_option($name, $default) : get_option($name, $default);
+    }
+
     /**
      * Initialize various modules of Warpdrive
      */
     public function load_modules() {
         // Load waprdrive.evvii-token
-        // If it exists, show Evvii menu options [cdn,purge-cache]
+        $token = $this->get_option(WARPDRIVE_EVVII_TOKEN);
+        // If token exists, show Evvii menu options
+        if (!is_null($token)) {
+            // TODO: Add CDN plugin part
+            // Include purge cache module
+            include(BASE."warpdrive/purge-cache.php");
+        }
 
-        // Include purge cache module
-        include(BASE."warpdrive/purge-cache.php");
         // Include read logs module
         include(BASE."warpdrive/read-logs.php");
         // Include limit login attempts
