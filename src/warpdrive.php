@@ -86,7 +86,7 @@ class Warpdrive {
     /**
      * Initialize various modules of Warpdrive
      */
-    public function load_modules() {
+    public static function load_modules() {
         // Load waprdrive.evvii-token
         $token = $this->get_option(WARPDRIVE_EVVII_TOKEN);
         // If token exists, show Evvii menu options
