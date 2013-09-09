@@ -56,6 +56,9 @@ class Warpdrive {
      * Initialize various modules of Warpdrive
      */
     public function load_modules() {
+        // Load waprdrive.evvii-token
+        // If it exists, show Evvii menu options [cdn,purge-cache]
+
         // Include purge cache module
         include(BASE."warpdrive/purge-cache.php");
         // Include read logs module
@@ -99,7 +102,9 @@ class Warpdrive {
     }
 
     public function dashboard_page() {
-
+        // Check postdata for evvii-token and check with Evvii whether this token is valid
+        // Load waprdive.evviii-token
+        // If token is empty, show form to set token
     }
 }
 
