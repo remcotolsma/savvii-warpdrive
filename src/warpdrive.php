@@ -11,6 +11,7 @@
 
 define('BASE', plugin_dir_path(__FILE__));
 define('WARPDRIVE_EVVII_TOKEN', 'warpdrive_evvii_token');
+define('WARPDRIVE_EVVII_TOKEN_FIELD', 'warpdrive_evvii_token_field');
 
 class Warpdrive {
 
@@ -136,9 +137,33 @@ class Warpdrive {
     }
 
     public function dashboard_page() {
-        // Check postdata for evvii-token and check with Evvii whether this token is valid
+        if (isset($_POST[WARPDRIVE_EVVII_TOKEN_FIELD])) {
+            // Update token
+            $this->add_option(WARPDRIVE_EVVII_TOKEN, $_POST[WARPDRIVE_EVVII_TOKEN_FIELD]);
+            // TODO: Check token with Evvii
+        }
+
+
         // Load waprdive.evviii-token
-        // If token is empty, show form to set token
+        $token = $this->get_option(WARPDRIVE_EVVII_TOKEN, '');
+?>
+        <div class="wrap">
+            <h3><?php _e('Savvii Administration token') ?></h3>
+            <div><?php _e('This is the token obtained from the site overview page in the administration.'); ?></div>
+            <form method="post">
+                <table>
+                    <tr>
+                        <td><?php _e('Admin token:', 'warpdrive'); ?></td>
+                        <td><input type="text" name="<?php echo WARPDRIVE_EVVII_TOKEN_FIELD; ?>" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>" /></td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td><input type="submit" value="<?php _e('Save token') ?>"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+<?php
     }
 }
 
