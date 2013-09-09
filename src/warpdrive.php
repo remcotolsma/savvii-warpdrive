@@ -88,10 +88,9 @@ class Warpdrive {
      */
     public static function load_modules() {
         // Load waprdrive.evvii-token
-        $token = $this->get_option(WARPDRIVE_EVVII_TOKEN);
+        $token = Warpdrive::get_option(WARPDRIVE_EVVII_TOKEN);
         // If token exists, show Evvii menu options
         if (!is_null($token)) {
-            // TODO: Add CDN plugin part
             // Include purge cache module
             include(BASE."warpdrive/purge-cache.php");
         }
@@ -119,7 +118,7 @@ class Warpdrive {
 
     /**
      * Filter our plugin to top
-     * @param $menu_order Original order
+     * @param $menu_order array Original order
      * @return array Modified order
      */
     public function admin_menu_order($menu_order) {
