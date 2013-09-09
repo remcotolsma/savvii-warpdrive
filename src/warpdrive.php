@@ -52,9 +52,35 @@ class Warpdrive {
         add_filter('menu_order', array($this, 'admin_menu_order'));
     }
 
+    /**
+     * @return bool True if site is running as multisite
+     */
+    public static function is_multisite() {
+        return function_exists('get_site_option') && function_exists('is_multisite') && is_multisite();
+    }
+
+    /**
+     * Get an option from the database
+     * @param $name string Name of the option
+     * @param null $default mixed Default value of the option
+     * @return mixed|void Value of the option if it exists, else $default
+     */
     public function get_option($name, $default=null) {
-        return $this->isMultisite() ?
+        return Warpdrive::is_multisite() ?
             get_site_option($name, $default) : get_option($name, $default);
+    }
+
+    /**
+     * Save an option in the database
+     * @param $name string Name of the option to set
+     * @param $value mixed Value of the option to set
+     */
+    public static function add_option($name, $value) {
+        if (Warpdrive::is_multisite()) {
+            add_site_option($name, $value);
+        } else {
+            add_option($name, $value);
+        }
     }
 
     /**
