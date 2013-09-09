@@ -10,7 +10,8 @@
  */
 
 define('BASE', plugin_dir_path(__FILE__));
-
+define('WARPDRIVE_EVVII_TOKEN', 'warpdrive_evvii_token');
+define('WARPDRIVE_EVVII_TOKEN_FIELD', 'warpdrive_evvii_token_field');
 
 class Warpdrive {
 
@@ -53,11 +54,48 @@ class Warpdrive {
     }
 
     /**
+     * @return bool True if site is running as multisite
+     */
+    public static function is_multisite() {
+        return function_exists('get_site_option') && function_exists('is_multisite') && is_multisite();
+    }
+
+    /**
+     * Get an option from the database
+     * @param $name string Name of the option
+     * @param null $default mixed Default value of the option
+     * @return mixed|void Value of the option if it exists, else $default
+     */
+    public function get_option($name, $default=null) {
+        return Warpdrive::is_multisite() ?
+            get_site_option($name, $default) : get_option($name, $default);
+    }
+
+    /**
+     * Save an option in the database
+     * @param $name string Name of the option to set
+     * @param $value mixed Value of the option to set
+     */
+    public static function add_option($name, $value) {
+        if (Warpdrive::is_multisite()) {
+            add_site_option($name, $value);
+        } else {
+            add_option($name, $value);
+        }
+    }
+
+    /**
      * Initialize various modules of Warpdrive
      */
-    public function load_modules() {
-        // Include purge cache module
-        include(BASE."warpdrive/purge-cache.php");
+    public static function load_modules() {
+        // Load waprdrive.evvii-token
+        $token = Warpdrive::get_option(WARPDRIVE_EVVII_TOKEN);
+        // If token exists, show Evvii menu options
+        if (!is_null($token)) {
+            // Include purge cache module
+            include(BASE."warpdrive/purge-cache.php");
+        }
+
         // Include read logs module
         include(BASE."warpdrive/read-logs.php");
         // Include limit login attempts
@@ -81,7 +119,7 @@ class Warpdrive {
 
     /**
      * Filter our plugin to top
-     * @param $menu_order Original order
+     * @param $menu_order array Original order
      * @return array Modified order
      */
     public function admin_menu_order($menu_order) {
@@ -99,7 +137,33 @@ class Warpdrive {
     }
 
     public function dashboard_page() {
+        if (isset($_POST[WARPDRIVE_EVVII_TOKEN_FIELD])) {
+            // Update token
+            $this->add_option(WARPDRIVE_EVVII_TOKEN, $_POST[WARPDRIVE_EVVII_TOKEN_FIELD]);
+            // TODO: Check token with Evvii
+        }
 
+
+        // Load waprdive.evviii-token
+        $token = $this->get_option(WARPDRIVE_EVVII_TOKEN, '');
+?>
+        <div class="wrap">
+            <h3><?php _e('Savvii Administration token') ?></h3>
+            <div><?php _e('This is the token obtained from the site overview page in the administration.'); ?></div>
+            <form method="post">
+                <table>
+                    <tr>
+                        <td><?php _e('Admin token:', 'warpdrive'); ?></td>
+                        <td><input type="text" name="<?php echo WARPDRIVE_EVVII_TOKEN_FIELD; ?>" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>" /></td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td><input type="submit" value="<?php _e('Save token') ?>"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+<?php
     }
 }
 
