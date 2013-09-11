@@ -94,7 +94,6 @@ class Warpdrive {
         // If token exists, show Evvii menu options
         if (!is_null($token)) {
             // Include purge cache module
-            include(BASE."warpdrive/purge-cache.php");
             include(BASE."warpdrive/evvii-cache.php");
         }
 
