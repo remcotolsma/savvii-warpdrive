@@ -12,6 +12,7 @@
 define('BASE', plugin_dir_path(__FILE__));
 define('WARPDRIVE_EVVII_TOKEN', 'warpdrive_evvii_token');
 define('WARPDRIVE_EVVII_TOKEN_FIELD', 'warpdrive_evvii_token_field');
+define('WARPDRIVE_EVVII_LOCATION', 'https://evvii.savviihq.com');
 
 class Warpdrive {
 
@@ -66,7 +67,7 @@ class Warpdrive {
      * @param null $default mixed Default value of the option
      * @return mixed|void Value of the option if it exists, else $default
      */
-    public function get_option($name, $default=null) {
+    public static function get_option($name, $default=null) {
         return Warpdrive::is_multisite() ?
             get_site_option($name, $default) : get_option($name, $default);
     }
@@ -94,6 +95,7 @@ class Warpdrive {
         if (!is_null($token)) {
             // Include purge cache module
             include(BASE."warpdrive/purge-cache.php");
+            include(BASE."warpdrive/evvii-cache.php");
         }
 
         // Include read logs module
