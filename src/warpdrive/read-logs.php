@@ -63,18 +63,18 @@ class WarpdriveReadLogs {
             </tr>
         </table>';
 
-        $file = null;
+        $file_regexp = null;
         $name = null;
         if ($_GET['file'] == "access") {
             $name = __('Access log', 'warpdrive');
-            $file = BASE . "../../../log/access.log";
+            $file_regexp = BASE . "../../../log/*.access.log";
         } else if($_GET['file'] == "error") {
             $name = __('Error log', 'warpdrive');
-            $file = BASE . "../../../log/error.log";
+            $file_regexp = BASE . "../../../log/*.error.log";
         }
 
         // No file selected, quit
-        if (!$file)
+        if (!$file_regexp)
             return;
 
         $lines = 10;
@@ -84,9 +84,10 @@ class WarpdriveReadLogs {
                 $lines = $_GET['lines']+0;
         }
 
-        if (@file_exists($file)) {
+        $files = glob($file_regexp);
+        if (is_array($files) && count($files) > 0 && @file_exists($files[0])) {
             // Get contents as array
-            $file_lines = explode("\n", @file_get_contents($file));
+            $file_lines = explode("\n", @file_get_contents($files[0]));
             // Remove last entry (it is empty)
             array_pop($file_lines);
             // Get slice of array we want
