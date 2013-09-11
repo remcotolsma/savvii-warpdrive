@@ -10,6 +10,7 @@ class Evvii_Cache {
         'edit_attachment',    // Runs when an attached file is edited/updated to the database.
         'switch_theme', // Runs when the blog's theme is changed.
         'generate_rewrite_rules', // Runs after the rewrite rules are generated.
+        // TODO: [6] Add Widget events when they are added to WordPress
     );
 
     private $flush_required = false;
