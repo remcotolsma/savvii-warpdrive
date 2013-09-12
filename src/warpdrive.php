@@ -149,12 +149,12 @@ class Warpdrive {
         $token = $this->get_option(WARPDRIVE_EVVII_TOKEN, '');
 ?>
         <div class="wrap">
-            <h3><?php _e('Savvii Administration token') ?></h3>
+            <h3><?php _e('Savvii access token') ?></h3>
             <div><?php _e('This is the token obtained from the site overview page in the administration.'); ?></div>
             <form method="post">
                 <table>
                     <tr>
-                        <td><?php _e('Admin token:', 'warpdrive'); ?></td>
+                        <td><?php _e('Access token:', 'warpdrive'); ?></td>
                         <td><input type="text" name="<?php echo WARPDRIVE_EVVII_TOKEN_FIELD; ?>" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>" /></td>
                     </tr>
                     <tr>
