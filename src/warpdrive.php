@@ -50,6 +50,7 @@ class Warpdrive {
     function Warpdrive() {
         // Add plugin to menu and put it on top
         add_action('admin_menu', array($this, 'admin_menu_init'));
+        // Menu filters
         add_filter('custom_menu_order', array($this, 'admin_custom_menu_order'));
         add_filter('menu_order', array($this, 'admin_menu_order'));
     }
@@ -59,6 +60,30 @@ class Warpdrive {
      */
     public static function is_multisite() {
         return function_exists('get_site_option') && function_exists('is_multisite') && is_multisite();
+    }
+
+    /**
+     * Returns true if it's WPMU
+     * @static
+     * @return bool
+     */
+    public static function is_wpmu() {
+        static $wpmu = null;
+
+        if (is_null($wpmu)) {
+            $wpmu = file_exists(ABSPATH.'wpmu-settings.php');
+        }
+
+        return $wpmu;
+    }
+
+    /**
+     * Returns true if there is multisite mode
+     * @static
+     * return bool
+     */
+    public static function is_network() {
+        return self::is_wpmu() || self::is_multisite();
     }
 
     /**
@@ -101,6 +126,8 @@ class Warpdrive {
         include(BASE."warpdrive/read-logs.php");
         // Include limit login attempts
         include(BASE."warpdrive/limit-login-attempts.php");
+        // Include CDN module
+        include(BASE."warpdrive/cdn.php");
     }
 
     /**
