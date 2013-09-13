@@ -207,7 +207,12 @@ class Warpdrive {
 
         // If return header has code 200 or 204, set cache as flushed
         if ($code == 200 || $code == 204) {
-            return $result['response'];
+            $body = json_decode($result['body'], true);
+            if (is_null($body)) {
+                return array();
+            } else {
+                return $body;
+            }
         } else {
             return null;
         }
@@ -220,13 +225,13 @@ class Warpdrive {
             // Check token with Evvii
             $site = $this->get_site_from_evvii($token);
             if (is_array($site)) {
-                debug($site);
                 // Save token and site name
+                echo '<h2>'._('Access token saved!').'</h2>';
                 $this->add_option(WARPDRIVE_OPT_ACCESS_TOKEN, $token);
-                $this->add_option(WARPDRIVE_OPT_SITE_NAME, $site['servername']);
+                $this->add_option(WARPDRIVE_OPT_SITE_NAME, $site['system_name']);
             } else {
                 // Token failed, show error
-                echo '<div class="updated">'._('Incorrect token provided!').'</div>';
+                echo '<h2>'._('Incorrect access token provided!').'</h2>';
                 // Remove old token and site name from database
                 $this->delete_option(WARPDRIVE_OPT_ACCESS_TOKEN);
                 $this->delete_option(WARPDRIVE_OPT_SITE_NAME);
