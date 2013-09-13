@@ -63,6 +63,30 @@ class Warpdrive {
     }
 
     /**
+     * Returns true if it's WPMU
+     * @static
+     * @return bool
+     */
+    public static function is_wpmu() {
+        static $wpmu = null;
+
+        if (is_null($wpmu)) {
+            $wpmu = file_exists(ABSPATH.'wpmu-settings.php');
+        }
+
+        return $wpmu;
+    }
+
+    /**
+     * Returns true if there is multisite mode
+     * @static
+     * return bool
+     */
+    public static function is_network() {
+        return self::is_wpmu() || self::is_multisite();
+    }
+
+    /**
      * Get an option from the database
      * @param $name string Name of the option
      * @param null $default mixed Default value of the option
