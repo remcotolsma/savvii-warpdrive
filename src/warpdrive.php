@@ -10,9 +10,10 @@
  */
 
 define('BASE', plugin_dir_path(__FILE__));
-define('WARPDRIVE_EVVII_TOKEN', 'warpdrive_evvii_token');
-define('WARPDRIVE_EVVII_TOKEN_FIELD', 'warpdrive_evvii_token_field');
-define('WARPDRIVE_EVVII_LOCATION', 'https://evvii.savviihq.com');
+define('WARPDRIVE_OPT_ACCESS_TOKEN',  'warpdrive.access_token');
+define('WARPDRIVE_OPT_SITE_NAME',     'warpdrive.site_name');
+define('WARPDRIVE_EVVII_LOCATION',    'https://evvii.savviihq.com');
+define('WARPDRIVE_FORM_TOKEN',        'warpdrive_evvii_token_field');
 
 class Warpdrive {
 
@@ -111,6 +112,19 @@ class Warpdrive {
     }
 
     /**
+     * Delete an option in the database
+     * @static
+     * @param string $name Name of the option to remove
+     */
+    public static function delete_option($name) {
+        if (Warpdrive::is_multisite()) {
+            delete_site_option($name);
+        } else {
+            delete_option($name);
+        }
+    }
+
+    /**
      * Initialize various modules of Warpdrive
      */
     public static function load_modules() {
@@ -164,16 +178,69 @@ class Warpdrive {
         return $order;
     }
 
+    /**
+     * Test site token with Evvii to request site information
+     * @param string $token Access token from Wallii
+     * @return array|null Null if token is invalid, else site information
+     */
+    private function get_site_from_evvii($token) {
+        if (empty($token)) {
+            return null;
+        }
+
+        // Build cache delete url
+        $url = WARPDRIVE_EVVII_LOCATION.'/v1/site?access_token='.$token;
+
+        // Call Evvii
+        $http = new WP_Http();
+        $result = $http->request($url, array(
+            'method' => 'GET',
+            'httpversion' => '1.1',
+            'sslverify' => false,
+            'headers' => array(
+                'Authorization' => 'Token token="'.$token.'"',
+            ),
+        ));
+
+        // Get return code from result
+        $code = isset($result['response']) ? (isset($result['response']['code']) ? $result['response']['code'] : 500) : 500;
+
+        // If return header has code 200 or 204, set cache as flushed
+        if ($code == 200 || $code == 204) {
+            $body = json_decode($result['body'], true);
+            if (is_null($body)) {
+                return array();
+            } else {
+                return $body;
+            }
+        } else {
+            return null;
+        }
+    }
+
     public function dashboard_page() {
-        if (isset($_POST[WARPDRIVE_EVVII_TOKEN_FIELD])) {
-            // Update token
-            $this->add_option(WARPDRIVE_EVVII_TOKEN, $_POST[WARPDRIVE_EVVII_TOKEN_FIELD]);
-            // TODO: Check token with Evvii
+        if (isset($_POST[WARPDRIVE_FORM_TOKEN])) {
+            // Get token from field
+            $token = $_POST[WARPDRIVE_FORM_TOKEN];
+            // Check token with Evvii
+            $site = $this->get_site_from_evvii($token);
+            if (is_array($site)) {
+                // Save token and site name
+                echo '<h2>'._('Access token saved!').'</h2>';
+                $this->add_option(WARPDRIVE_OPT_ACCESS_TOKEN, $token);
+                $this->add_option(WARPDRIVE_OPT_SITE_NAME, $site['system_name']);
+            } else {
+                // Token failed, show error
+                echo '<h2>'._('Incorrect access token provided!').'</h2>';
+                // Remove old token and site name from database
+                $this->delete_option(WARPDRIVE_OPT_ACCESS_TOKEN);
+                $this->delete_option(WARPDRIVE_OPT_SITE_NAME);
+            }
         }
 
 
         // Load waprdive.evviii-token
-        $token = $this->get_option(WARPDRIVE_EVVII_TOKEN, '');
+        $token = $this->get_option(WARPDRIVE_OPT_ACCESS_TOKEN, '');
 ?>
         <div class="wrap">
             <h3><?php _e('Savvii access token') ?></h3>
@@ -182,7 +249,7 @@ class Warpdrive {
                 <table>
                     <tr>
                         <td><?php _e('Access token:', 'warpdrive'); ?></td>
-                        <td><input type="text" name="<?php echo WARPDRIVE_EVVII_TOKEN_FIELD; ?>" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>" /></td>
+                        <td><input type="text" name="<?php echo WARPDRIVE_FORM_TOKEN; ?>" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>" /></td>
                     </tr>
                     <tr>
                         <td>&nbsp;</td>

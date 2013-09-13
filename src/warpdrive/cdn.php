@@ -71,7 +71,7 @@ class WarpdriveCdn {
         // Get site name
         static $site_name = null;
         if (is_null($site_name)) {
-            $site_name = Warpdrive::get_option('warpdrive.site_name');
+            $site_name = Warpdrive::get_option(WARPDRIVE_OPT_SITE_NAME);
         }
 
         // Try to create a CDN link    
