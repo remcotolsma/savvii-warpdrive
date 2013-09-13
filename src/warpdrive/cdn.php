@@ -27,6 +27,7 @@ class WarpdriveCdn {
     }
 
     public function process(&$buffer) {
+
         return
             "\n<!-- ---------------------------------------------------------------------------------------------------------- -->\n".
             "\n<!-- Start ---------------------------------------------------------------------------------------------------- -->\n".
@@ -55,43 +56,6 @@ class WarpdriveCdn {
 
         // True in all other cases
         return true;
-    }
-
-    /**
-     * Output buffer callback
-     * @param string $buffer Unprocessed output buffer
-     * @return string Processed output buffer
-     */
-    public function ob_callback_cdn_filter(&$buffer) {
-        // Check if we're dealing with xml or html
-        if ($buffer == "" || !$this->is_buffer_xml_or_html($buffer)) {
-            // Do not process buffer
-            return $buffer;
-        }
-
-        return $buffer;
-    }
-
-
-    private function is_buffer_xml_or_html(&$buffer) {
-        // Get first 1000 characters of buffer
-        $check_buffer = substr($buffer, 0, 1000);
-
-        // If comments are found, remove them
-        if (strstr($check_buffer, '<!--') !== false) {
-            // Remove comment
-            $check_buffer = preg_replace('@<!--.*?-->@s', '', $check_buffer);
-        }
-
-        // Trim all whitespace characters
-        $check_buffer = ltrim($check_buffer, "\x00\x09\x0A\x0D\x20\xBB\xBF\xEF");
-
-        // Check if buffer starts with <?xml, <html or <!DOCTYPE
-        return (
-            stripos($check_buffer, '<?xml') === 0
-                || stripos($check_buffer, '<html') === 0
-                || stripos($check_buffer, '<!DOCTYPE') === 0
-        );
     }
 
 }
