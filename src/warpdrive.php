@@ -226,7 +226,7 @@ class Warpdrive {
                 $this->add_option(WARPDRIVE_OPT_SITE_NAME, $site['servername']);
             } else {
                 // Token failed, show error
-                echo '<h4>'._e('Incorrect token provided!').'</h4>';
+                echo '<div class="updated">'._('Incorrect token provided!').'</div>';
                 // Remove old token and site name from database
                 $this->delete_option(WARPDRIVE_OPT_ACCESS_TOKEN);
                 $this->delete_option(WARPDRIVE_OPT_SITE_NAME);
