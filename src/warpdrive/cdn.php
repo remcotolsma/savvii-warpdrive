@@ -30,10 +30,15 @@ class WarpdriveCdn {
         $regexps = array();
         $site_path = $this->get_site_path();
         $domain_regexp = $this->get_url_regexp($this->get_domain_url());
-        $general_mask = "*.css;*.js;*.gif;*.png;*.jpg;*.ico;*.ttf;*.otf,*.woff";
+        $general_mask = "*.css;*.js;*.gif;*.png;*.jpg;*.xml;*.ico;*.ttf;*.otf,*.woff";
 
         // TODO: Upload links
-        // TODO: Include links
+
+        // Everything from wp-content
+        $regexps[] = $regexps[] = '~(["\'(])\s*(('.$domain_regexp.')?('.$this->preg_quote($site_path.'wp-content').'/('.$this->get_regexp_by_mask($general_mask).')))~';
+
+        // Include files
+        $regexps[] = $regexps[] = '~(["\'(])\s*(('.$domain_regexp.')?('.$this->preg_quote($site_path.WPINC).'/('.$this->get_regexp_by_mask($general_mask).')))~';
 
         // Theme links
         $theme_dir = preg_replace('~'.$domain_regexp.'~i', '', get_theme_root_uri());
@@ -44,15 +49,6 @@ class WarpdriveCdn {
         foreach ($regexps as $regexp) {
             $buffer = preg_replace_callback($regexp, array($this, 'process_link'), $buffer);
         }
-
-        $buffer =
-            "\n<!-- ---------------------------------------------------------------------------------------------------------- -->\n".
-            "\n<!-- Start ---------------------------------------------------------------------------------------------------- -->\n".
-            "\n<!-- ---------------------------------------------------------------------------------------------------------- -->\n\n".
-            $buffer.
-            "\n<!-- -------------------------------------------------------------------------------------------------------- -->\n".
-            "\n<!-- End ---------------------------------------------------------------------------------------------------- -->\n".
-            "\n<!-- -------------------------------------------------------------------------------------------------------- -->\n\n";
 
         return $buffer;
     }
@@ -72,10 +68,15 @@ class WarpdriveCdn {
             return $quote.$this->replaced_urls[$url];
         }
 
-        // Try to create a CDN link
-        $site_name = Warpdrive::get_option('warpdrive.site_name');
+        // Get site name
+        static $site_name = null;
+        if (is_null($site_name)) {
+            $site_name = Warpdrive::get_option('warpdrive.site_name');
+        }
+
+        // Try to create a CDN link    
         if ($site_name) {
-            $cdn_index = rand(0, 1);
+            $cdn_index = rand(0, 9);
             $new_url = $quote.sprintf('%s://cdn%d.%s.savviihq.com/%s', $this->get_scheme(), $cdn_index, $site_name, $path);
 
             // Save url for repeated requests
