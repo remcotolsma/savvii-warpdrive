@@ -189,7 +189,7 @@ class Warpdrive {
         }
 
         // Build cache delete url
-        $url = WARPDRIVE_EVVII_LOCATION.'/v1/sites/'.$token;
+        $url = WARPDRIVE_EVVII_LOCATION.'/v1/site?access_token='.$token;
 
         // Call Evvii
         $http = new WP_Http();
