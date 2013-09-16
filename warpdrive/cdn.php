@@ -76,7 +76,7 @@ class WarpdriveCdn {
 
         // Try to create a CDN link    
         if ($site_name) {
-            $cdn_index = rand(0, 9);
+            $cdn_index = rand(1, 5);
             $new_url = $quote.sprintf('%s://cdn%d.%s.savviihq.com/%s', $this->get_scheme(), $cdn_index, $site_name, $path);
 
             // Save url for repeated requests
