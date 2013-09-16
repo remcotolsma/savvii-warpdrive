@@ -67,10 +67,10 @@ class WarpdriveReadLogs {
         $name = null;
         if ($_GET['file'] == "access") {
             $name = __('Access log', 'warpdrive');
-            $file_regexp = BASE . "../../../log/*.access.log";
+            $file_regexp = ABSPATH . "../log/*.access.log";
         } else if($_GET['file'] == "error") {
             $name = __('Error log', 'warpdrive');
-            $file_regexp = BASE . "../../../log/*.error.log";
+            $file_regexp = ABSPATH . "../log/*.error.log";
         }
 
         // No file selected, quit
