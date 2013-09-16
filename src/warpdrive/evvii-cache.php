@@ -68,7 +68,7 @@ class Evvii_Cache {
     public function execute_flush($forced=false) {
         if ($forced || $this->flush_required) {
             // Check if the token for Evvii is present
-            $token = Warpdrive::get_option(WARPDRIVE_EVVII_TOKEN);
+            $token = Warpdrive::get_option(WARPDRIVE_OPT_ACCESS_TOKEN);
             if (is_null($token)) {
                 $this->flush_failed = true;
                 $this->flush_missing_token = true;
