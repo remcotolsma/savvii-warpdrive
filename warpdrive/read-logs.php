@@ -90,8 +90,8 @@ class WarpdriveReadLogs {
             $file_lines = explode("\n", @file_get_contents($files[0]));
             // Remove last entry (it is empty)
             array_pop($file_lines);
-            // Get slice of array we want
-            $file_lines = array_slice($file_lines, -1 * $lines);
+            // Get slice of array we want, reverse it to have last line first in array
+            $file_lines = array_reverse(array_slice($file_lines, -1 * $lines));
             $total_lines = count($file_lines);
 
             echo '<div style="font-size: 2em; margin-top: 1em;">'.$name.'</div>';
