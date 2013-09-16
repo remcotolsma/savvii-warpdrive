@@ -687,7 +687,7 @@ class WarpdriveLimitLoginAttempts {
         $until = ceil(($list[$ip] - time()) / 60);
         if ($until > 60) {
             $until = ceil($until / 60);
-            $msg .= sprinft(_n('Please try again in %d hour.', 'Please try again in %d hours.', $until, 'warpdrive'), $until);
+            $msg .= sprintf(_n('Please try again in %d hour.', 'Please try again in %d hours.', $until, 'warpdrive'), $until);
         } else {
             $msg .= sprintf(_n('Please try again in %d minute.', 'Please try again in %d minutes.', $until, 'warpdrive'), $until);
         }
@@ -1315,7 +1315,7 @@ class WarpdriveLimitLoginAttempts {
         if ($connectionType != $connectionGuess) {
             $connectionCurrent = ($connectionGuess == WarpdriveLLADirectAddr) ? __('direct') : __('proxy');
             $connectionSet     = ($connectionType  == WarpdriveLLADirectAddr) ? __('direct') : __('proxy');
-            $connectionMessage = '<br /><br />'.sprinft(__('<strong>Current connection setting appear to be invalid</strong>: You are using a %s connection while %s connection is set.', 'warpdrive'), $connectionCurrent, $connectionSet);
+            $connectionMessage = '<br /><br />'.sprintf(__('<strong>Current connection setting appear to be invalid</strong>: You are using a %s connection while %s connection is set.', 'warpdrive'), $connectionCurrent, $connectionSet);
         }
 
         // Cookies
