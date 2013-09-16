@@ -12,8 +12,10 @@
 define('BASE', plugin_dir_path(__FILE__));
 define('WARPDRIVE_OPT_ACCESS_TOKEN',  'warpdrive.access_token');
 define('WARPDRIVE_OPT_SITE_NAME',     'warpdrive.site_name');
+define('WARPDRIVE_OPT_CDN_ENABLED',   'warpdrive.cdn_enabled');
 define('WARPDRIVE_EVVII_LOCATION',    'https://evvii.savviihq.com');
 define('WARPDRIVE_FORM_TOKEN',        'warpdrive_evvii_token_field');
+define('WARPDRIVE_FORM_CDN_ENABLED',  'warpdrive_cdn_field');
 
 class Warpdrive {
 
@@ -140,8 +142,12 @@ class Warpdrive {
         include(BASE."warpdrive/read-logs.php");
         // Include limit login attempts
         include(BASE."warpdrive/limit-login-attempts.php");
-        // Include CDN module
-        include(BASE."warpdrive/cdn.php");
+
+        // Only load CDN when we want to
+        if (self::get_option(WARPDRIVE_OPT_CDN_ENABLED, false)) {
+            // Include CDN module
+            include(BASE."warpdrive/cdn.php");
+        }
     }
 
     /**
@@ -219,6 +225,7 @@ class Warpdrive {
     }
 
     public function dashboard_page() {
+        // Access token for Evvii
         if (isset($_POST[WARPDRIVE_FORM_TOKEN])) {
             // Get token from field
             $token = $_POST[WARPDRIVE_FORM_TOKEN];
@@ -238,14 +245,24 @@ class Warpdrive {
             }
         }
 
+        // CDN enable
+        if (isset($_POST[WARPDRIVE_FORM_CDN_ENABLED])) {
+            // Get value
+            debug($_POST);
+            $cdn_enabled = $_POST[WARPDRIVE_FORM_CDN_ENABLED] == 'enabled';
+            // Save to database
+            $this->add_option(WARPDRIVE_OPT_CDN_ENABLED, $cdn_enabled);
+        }
+
 
         // Load waprdive.evviii-token
         $token = $this->get_option(WARPDRIVE_OPT_ACCESS_TOKEN, '');
+        $cdn_enabled = $this->get_option(WARPDRIVE_OPT_CDN_ENABLED, false);
 ?>
         <div class="wrap">
             <h3><?php _e('Savvii access token') ?></h3>
             <div><?php _e('This is the token obtained from the site overview page in the administration.'); ?></div>
-            <form method="post">
+            <form action="" method="post">
                 <table>
                     <tr>
                         <td><?php _e('Access token:', 'warpdrive'); ?></td>
@@ -256,6 +273,20 @@ class Warpdrive {
                         <td><input type="submit" value="<?php _e('Save token') ?>"></td>
                     </tr>
                 </table>
+            </form>
+
+            <h3><?php _e('Savvii CDN', 'warpdrive') ?></h3>
+            <div><?php _e('Here you can enable or disable the usage of Savvii\'s CDN', 'warpdrive'); ?></div>
+            <form action="" method="post">
+                <label>
+                    <input type="radio" name="<?php echo WARPDRIVE_FORM_CDN_ENABLED; ?>" value="enabled" <?php if ($cdn_enabled) echo ' checked'; ?>/>
+                    <?php _e('Enabled', 'warpdrive'); ?>
+                </label><br />
+                <label>
+                    <input type="radio" name="<?php echo WARPDRIVE_FORM_CDN_ENABLED; ?>" value="disabled" <?php if (!$cdn_enabled) echo ' checked'; ?>/>
+                    <?php _e('Disabled', 'warpdrive'); ?>
+                </label><br />
+                <input type="submit" value="<?php _e('Save CDN choice') ?>">
             </form>
         </div>
 <?php
