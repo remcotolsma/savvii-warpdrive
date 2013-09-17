@@ -104,12 +104,13 @@ class Warpdrive {
      * Save an option in the database
      * @param $name string Name of the option to set
      * @param $value mixed Value of the option to set
+     * @return bool
      */
     public static function add_option($name, $value) {
         if (Warpdrive::is_multisite()) {
-            add_site_option($name, $value);
+            return add_site_option($name, $value);
         } else {
-            add_option($name, $value);
+            return add_option($name, $value);
         }
     }
 
@@ -117,12 +118,27 @@ class Warpdrive {
      * Delete an option in the database
      * @static
      * @param string $name Name of the option to remove
+     * @return bool
      */
     public static function delete_option($name) {
         if (Warpdrive::is_multisite()) {
-            delete_site_option($name);
+            return delete_site_option($name);
         } else {
-            delete_option($name);
+            return delete_option($name);
+        }
+    }
+
+    /**
+     * Update an option in the database
+     * @static
+     * @param string $name Name of the option
+     * @param mixed $value New value of the option
+     */
+    public static function update_option($name, $value) {
+        if (Warpdrive::is_multisite()) {
+            return update_site_option($name, $value);
+        } else {
+            return update_option($name, $value);
         }
     }
 
@@ -248,9 +264,9 @@ class Warpdrive {
         // CDN enable
         if (isset($_POST[WARPDRIVE_FORM_CDN_ENABLED])) {
             // Get value
-            $cdn_enabled = $_POST[WARPDRIVE_FORM_CDN_ENABLED] == 'enabled';
+            $cdn_enabled = intval($_POST[WARPDRIVE_FORM_CDN_ENABLED]);
             // Save to database
-            $this->add_option(WARPDRIVE_OPT_CDN_ENABLED, $cdn_enabled);
+            Warpdrive::update_option(WARPDRIVE_OPT_CDN_ENABLED, $cdn_enabled);
             echo '<h2>'._('CDN choice saved!').'</h2>';
         }
 
@@ -279,11 +295,11 @@ class Warpdrive {
             <div><?php _e('Here you can enable or disable the usage of Savvii\'s CDN', 'warpdrive'); ?></div>
             <form action="" method="post">
                 <label>
-                    <input type="radio" name="<?php echo WARPDRIVE_FORM_CDN_ENABLED; ?>" value="enabled" <?php if ($cdn_enabled) echo ' checked'; ?>/>
+                    <input type="radio" name="<?php echo WARPDRIVE_FORM_CDN_ENABLED; ?>" value="1" <?php if ($cdn_enabled) echo ' checked'; ?>/>
                     <?php _e('Enabled', 'warpdrive'); ?>
                 </label><br />
                 <label>
-                    <input type="radio" name="<?php echo WARPDRIVE_FORM_CDN_ENABLED; ?>" value="disabled" <?php if (!$cdn_enabled) echo ' checked'; ?>/>
+                    <input type="radio" name="<?php echo WARPDRIVE_FORM_CDN_ENABLED; ?>" value="0" <?php if (!$cdn_enabled) echo ' checked'; ?>/>
                     <?php _e('Disabled', 'warpdrive'); ?>
                 </label><br />
                 <input type="submit" value="<?php _e('Save CDN choice') ?>">
