@@ -248,14 +248,14 @@ class Warpdrive {
         // CDN enable
         if (isset($_POST[WARPDRIVE_FORM_CDN_ENABLED])) {
             // Get value
-            debug($_POST);
             $cdn_enabled = $_POST[WARPDRIVE_FORM_CDN_ENABLED] == 'enabled';
             // Save to database
             $this->add_option(WARPDRIVE_OPT_CDN_ENABLED, $cdn_enabled);
+            echo '<h2>'._('CDN choice saved!').'</h2>';
         }
 
 
-        // Load waprdive.evviii-token
+        // Load warpdrive access token
         $token = $this->get_option(WARPDRIVE_OPT_ACCESS_TOKEN, '');
         $cdn_enabled = $this->get_option(WARPDRIVE_OPT_CDN_ENABLED, false);
 ?>
