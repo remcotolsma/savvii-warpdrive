@@ -252,12 +252,17 @@ class Warpdrive {
                 echo '<h2>'._('Access token saved!').'</h2>';
                 $this->add_option(WARPDRIVE_OPT_ACCESS_TOKEN, $token);
                 $this->add_option(WARPDRIVE_OPT_SITE_NAME, $site['system_name']);
+                $this->add_option(WARPDRIVE_OPT_CDN_ENABLED, 1);
+                // Flush cache
+                $flush = new Evvii_Cache();
+                $flush->execute_flush(true);
             } else {
                 // Token failed, show error
                 echo '<h2>'._('Incorrect access token provided!').'</h2>';
                 // Remove old token and site name from database
                 $this->delete_option(WARPDRIVE_OPT_ACCESS_TOKEN);
                 $this->delete_option(WARPDRIVE_OPT_SITE_NAME);
+                $this->delete_option(WARPDRIVE_OPT_CDN_ENABLED);
             }
         }
 
@@ -268,6 +273,9 @@ class Warpdrive {
             // Save to database
             Warpdrive::update_option(WARPDRIVE_OPT_CDN_ENABLED, $cdn_enabled);
             echo '<h2>'._('CDN choice saved!').'</h2>';
+            // Flush cache
+            $flush = new Evvii_Cache();
+            $flush->execute_flush(true);
         }
 
 
@@ -293,6 +301,12 @@ class Warpdrive {
 
             <h3><?php _e('Savvii CDN', 'warpdrive') ?></h3>
             <div><?php _e('Here you can enable or disable the usage of Savvii\'s CDN', 'warpdrive'); ?></div>
+<?php
+            if ($token == '') {
+                echo '<div>'._('CDN option cannot be changed until a valid access token is set.').'</div>';
+            } else {
+                // Token is set
+?>
             <form action="" method="post">
                 <label>
                     <input type="radio" name="<?php echo WARPDRIVE_FORM_CDN_ENABLED; ?>" value="1" <?php if ($cdn_enabled) echo ' checked'; ?>/>
@@ -304,6 +318,9 @@ class Warpdrive {
                 </label><br />
                 <input type="submit" value="<?php _e('Save CDN choice') ?>">
             </form>
+<?php
+            }
+?>
         </div>
 <?php
     }
