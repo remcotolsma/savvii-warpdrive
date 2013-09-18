@@ -35,10 +35,10 @@ class WarpdriveCdn {
         // TODO: Upload links
 
         // Everything from wp-content
-        $regexps[] = $regexps[] = '~(["\'(])\s*(('.$domain_regexp.')?('.$this->preg_quote($site_path.'wp-content').'/('.$this->get_regexp_by_mask($general_mask).')))~';
+        $regexps[] = '~(["\'(])\s*(('.$domain_regexp.')?('.$this->preg_quote($site_path.'wp-content').'/('.$this->get_regexp_by_mask($general_mask).')))~';
 
         // Include files
-        $regexps[] = $regexps[] = '~(["\'(])\s*(('.$domain_regexp.')?('.$this->preg_quote($site_path.WPINC).'/('.$this->get_regexp_by_mask($general_mask).')))~';
+        $regexps[] = '~(["\'(])\s*(('.$domain_regexp.')?('.$this->preg_quote($site_path.WPINC).'/('.$this->get_regexp_by_mask($general_mask).')))~';
 
         // Theme links
         $theme_dir = preg_replace('~'.$domain_regexp.'~i', '', get_theme_root_uri());
