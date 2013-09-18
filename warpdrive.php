@@ -147,7 +147,7 @@ class Warpdrive {
      */
     public static function load_modules() {
         // Load waprdrive.evvii-token
-        $token = Warpdrive::get_option(WARPDRIVE_EVVII_TOKEN);
+        $token = Warpdrive::get_option(WARPDRIVE_OPT_ACCESS_TOKEN);
         // If token exists, show Evvii menu options
         if (!is_null($token)) {
             // Include purge cache module
