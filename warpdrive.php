@@ -253,6 +253,9 @@ class Warpdrive {
                 $this->add_option(WARPDRIVE_OPT_ACCESS_TOKEN, $token);
                 $this->add_option(WARPDRIVE_OPT_SITE_NAME, $site['system_name']);
                 $this->add_option(WARPDRIVE_OPT_CDN_ENABLED, 1);
+                // Flush cache
+                $flush = new Evvii_Cache();
+                $flush->execute_flush(true);
             } else {
                 // Token failed, show error
                 echo '<h2>'._('Incorrect access token provided!').'</h2>';
@@ -270,6 +273,9 @@ class Warpdrive {
             // Save to database
             Warpdrive::update_option(WARPDRIVE_OPT_CDN_ENABLED, $cdn_enabled);
             echo '<h2>'._('CDN choice saved!').'</h2>';
+            // Flush cache
+            $flush = new Evvii_Cache();
+            $flush->execute_flush(true);
         }
 
 
