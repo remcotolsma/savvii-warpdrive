@@ -106,7 +106,7 @@ class WarpdriveReadLogs {
             }
 
         } else {
-            echo '<p style="color: #D00; font-weight: bold;">'.__('File not found! Please contact support.', 'warpdrive').'</p>';
+            echo '<p style="color: #D00; font-weight: bold;">File not found! Please contact <a href="http://support.savvii.nl/" target="_blank">support</a>.</p>';
         }
     }
 }
