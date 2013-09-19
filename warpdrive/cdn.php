@@ -65,7 +65,7 @@ class WarpdriveCdn {
 
         // Check if url was already replaced
         if (isset($this->replaced_urls[$url])) {
-            return $quote.$this->replaced_urls[$url];
+            return $this->replaced_urls[$url];
         }
 
         // Get site name
