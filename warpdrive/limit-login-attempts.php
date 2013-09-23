@@ -1253,31 +1253,38 @@ class WarpdriveLimitLoginAttempts {
             // Are we allowed to edit options?
             check_admin_referer('warpdrive-limitloginattempts-options');
 
-            // Set options with new values
-            $this->options['allowed_attempts'] = $_POST['optAllowedAttempts']+0;
-            $this->options['lockout_duration'] = ($_POST['optLockoutDuration']+0) * 60;
-            $this->options['allowed_lockouts'] = $_POST['optAllowedLockouts']+0;
-            $this->options['lockout_long_duration'] = ($_POST['optLockoutLongDuration']+0) * 3600;
-            $this->options['valid_duration'] = ($_POST['optValidDuration']+0) * 3600;
-            $lockoutNotify = array();
-            if ($_POST['optNotifyLockoutLog']+0)
-                $lockoutNotify[] = 'log';
-            $this->options['lockout_notify'] = join(',', $lockoutNotify);
-            $this->options['limit_register'] = $_POST['optLimitRegister']+0 == 1;
-            $this->options['register_amount'] = $_POST['optRegisterAmount']+0;
-            $this->options['register_duration'] = ($_POST['optRegisterDuration']+0) * 3600;
-            $lockoutNotify = array();
-            if ($_POST['optNotifyLockoutRegisterLog']+0)
-                $lockoutNotify[] = 'log';
-            $this->options['register_notify'] = join(',', $lockoutNotify);
-            $this->options['reset_pwd_by_username_disable'] = ($_POST['optDisablePwdResetByUsername']+0) == 1;
-            $this->options['reset_pwd_by_username_level'] = $_POST['optDisablePwdResetByUsernameFrom']+0;
-            $this->options['reset_pwd_disable'] = ($_POST['optDisablePwdReset']+0) == 1;
-            $this->options['reset_pwd_level'] = $_POST['optDisablePwdResetFrom']+0;
+            // Check if we want to reset settings to default
+            if (isset($_POST['reset_to_defaults'])) {
+                $this->options = $GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'];
+                $this->saveOptions();
+                $this->adminMessage(__('Options reset to defaults', 'warpdrive'));
+            } else {
+                // Set options with new values
+                $this->options['allowed_attempts'] = $_POST['optAllowedAttempts']+0;
+                $this->options['lockout_duration'] = ($_POST['optLockoutDuration']+0) * 60;
+                $this->options['allowed_lockouts'] = $_POST['optAllowedLockouts']+0;
+                $this->options['lockout_long_duration'] = ($_POST['optLockoutLongDuration']+0) * 3600;
+                $this->options['valid_duration'] = ($_POST['optValidDuration']+0) * 3600;
+                $lockoutNotify = array();
+                if ($_POST['optNotifyLockoutLog']+0)
+                    $lockoutNotify[] = 'log';
+                $this->options['lockout_notify'] = join(',', $lockoutNotify);
+                $this->options['limit_register'] = $_POST['optLimitRegister']+0 == 1;
+                $this->options['register_amount'] = $_POST['optRegisterAmount']+0;
+                $this->options['register_duration'] = ($_POST['optRegisterDuration']+0) * 3600;
+                $lockoutNotify = array();
+                if ($_POST['optNotifyLockoutRegisterLog']+0)
+                    $lockoutNotify[] = 'log';
+                $this->options['register_notify'] = join(',', $lockoutNotify);
+                $this->options['reset_pwd_by_username_disable'] = ($_POST['optDisablePwdResetByUsername']+0) == 1;
+                $this->options['reset_pwd_by_username_level'] = $_POST['optDisablePwdResetByUsernameFrom']+0;
+                $this->options['reset_pwd_disable'] = ($_POST['optDisablePwdReset']+0) == 1;
+                $this->options['reset_pwd_level'] = $_POST['optDisablePwdResetFrom']+0;
 
-            $this->options = $this->sanitizeOptions($this->options);
-            $this->saveOptions();
-            $this->adminMessage(__('Options changed', 'warpdrive'));
+                $this->options = $this->sanitizeOptions($this->options);
+                $this->saveOptions();
+                $this->adminMessage(__('Options changed', 'warpdrive'));
+            }
         }
 
         // Setup variables for admin page
@@ -1411,6 +1418,8 @@ class WarpdriveLimitLoginAttempts {
                 </table>
                 <p class="submit">
                     <input type="submit" name="updateOptions" class="button-primary" value="<?php _e('Save Options','warpdrive'); ?>" />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="submit" name="reset_to_defaults" class="button-primary" value="<?php _e('Reset to defaults','warpdrive'); ?>" />
                 </p>
             </form>
         </div>
