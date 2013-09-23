@@ -1427,29 +1427,45 @@ class WarpdriveLimitLoginAttempts {
                     <table>
                         <tr>
                             <td style="font-weight: bold"><?php _e('IP address', 'warpdrive'); ?></td>
-                            <td style="font-weight: bold"><?php _e('Attempts', 'warpdrive'); ?></td>
+                            <td style="font-weight: bold"><?php _e('Lockouts', 'warpdrive'); ?></td>
                             <td style="font-weight: bold"><?php _e('Last attempt', 'warpdrive'); ?></td>
                         </tr>
 <?php   foreach ($this->getList('lockoutLog') as $ip=>$entry) { ?>
                         <tr>
                             <td><?php echo $ip ?></td>
-                            <td align="right"><?php echo $entry[1]; ?></td>
+                            <td align="right"><?php echo $entry[1]; ?>x</td>
                             <td align="right"><?php echo date("d-m-Y H:i", $entry[0]); ?></td>
                         </tr>
 <?php       foreach ($entry[2] as $user=>$value) { ?>
                         <tr>
                             <td align="right">-></td>
-                            <td align="right"><?php echo $value; ?></td>
+                            <td align="right"><?php echo $value; ?>x</td>
                             <td><?php echo $user; ?></td>
                         </tr>
 <?php       } ?>
 <?php   } ?>
                     </table>
-                    </dl>
                 </td>
+                <td valign="top">
+                    <h3>Login lockout log by username</h3>
+                    <table>
+                        <tr>
+                            <td style="font-weight: bold"><?php _e('Username', 'warpdrive'); ?></td>
+                            <td style="font-weight: bold"><?php _e('Lockouts', 'warpdrive'); ?></td>
+                        </tr>
+<?php   foreach ($this->getList('lockoutLog-username') as $uname=>$entry) { ?>
+                        <tr>
+                            <td><?php echo $uname ?></td>
+                            <td align="right"><?php echo $entry[1]; ?>x</td>
+                        </tr>
+<?php   } ?>
+                    </table>
+                </td>
+                <!--
                 <td valign="top">
                     <h3>Registration lockout log</h3>
                 </td>
+                -->
             </tr>
         </table>
         </div><?php
