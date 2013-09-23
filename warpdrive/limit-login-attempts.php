@@ -554,6 +554,19 @@ class WarpdriveLimitLoginAttempts {
 
         // Save log
         $this->saveList($logName, $log);
+
+        // Log per username
+        $log = $this->getList($logName.'-username');
+        if (isset($log[$username])) {
+            $entry = &$log[$username];
+            $entry[0] = time();
+            $entry[1]++;
+        } else {
+            $log[$username] = array(time(), 1);
+        }
+
+        // Save log
+        $this->saveList($logName.'-username', $log);
     }
 
     /**************************************************
