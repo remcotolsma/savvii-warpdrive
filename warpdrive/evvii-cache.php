@@ -22,6 +22,7 @@ class Evvii_Cache {
         add_action('init', array($this, 'init'));
         // Add to top bar
         add_action('admin_bar_menu', array($this, 'admin_bar_init'), 90);
+        add_action('admin_notices', array($this, 'admin_notice_widgets'));
     }
 
     public function init() {
@@ -49,6 +50,22 @@ class Evvii_Cache {
                 add_action('admin_notices', array($this, 'msg_flushed_message'));
             }
         }
+    }
+
+    /**
+     * Show notice regarding widgets and automatic flush
+     */
+    public function admin_notice_widgets() {
+        $page = get_current_screen();
+        if ($page->id != 'widgets') {
+            return;
+        }
+
+        ?>
+        <div class="updated">
+            <p><?php _e('<strong>Note: </strong>When changing widgets, flush is not automatically cleared! Use Flush now in admin bar when you finished editing widgets.', 'warpdrive' ); ?></p>
+        </div>
+        <?php
     }
 
     public function admin_bar_init() {
