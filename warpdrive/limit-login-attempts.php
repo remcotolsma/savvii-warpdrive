@@ -1327,7 +1327,7 @@ class WarpdriveLimitLoginAttempts {
                 <table>
                     <tr><th align="left" style="font-size: 1.5em;"><?php _e('Lockout', 'warpdrive'); ?></th></tg></tr>
                     <tr>
-                        <td><label for="optAllowedAttempts" title=""><?php _e('Allowed attempts', 'warpdrive'); ?></label></td>
+                        <td><label for="optAllowedAttempts" title=""><?php _e('Allowed attempts for lockout', 'warpdrive'); ?></label></td>
                         <td><input type="text" name="optAllowedAttempts" id="optAllowedAttempts" value="<?php echo $this->getOption('allowed_attempts'); ?>"></td>
                     </tr>
 
@@ -1337,7 +1337,7 @@ class WarpdriveLimitLoginAttempts {
                     </tr>
 
                     <tr>
-                        <td><label for="optAllowedLockouts" title=""><?php _e('Allowed lockouts', 'warpdrive'); ?></label></td>
+                        <td><label for="optAllowedLockouts" title=""><?php _e('Allowed lockouts for extended lockout', 'warpdrive'); ?></label></td>
                         <td><input type="text" name="optAllowedLockouts" id="optAllowedLockouts" value="<?php echo $this->getOption('allowed_lockouts'); ?>"></td>
                     </tr>
 
@@ -1361,7 +1361,7 @@ class WarpdriveLimitLoginAttempts {
                         <td colspan="2">
                             <label>
                                 <input type="checkbox" name="optNotifyLockoutLog"<?php echo $optNotifyLockoutLog; ?> value="1" />
-                                <?php _e('Register in log', 'warpdrive'); ?>
+                                <?php _e('Register in lockout log', 'warpdrive'); ?>
                             </label><br />
                         </td>
                     </tr>
@@ -1410,7 +1410,7 @@ class WarpdriveLimitLoginAttempts {
                         <td colspan="2">
                             <label>
                                 <input type="checkbox" name="optNotifyLockoutRegisterLog"<?php echo $optNotifyLockoutRegisterLog; ?> value="1" />
-                                <?php _e('Register in log', 'warpdrive'); ?>
+                                <?php _e('Register in registration log', 'warpdrive'); ?>
                             </label><br />
                         </td>
                     </tr>
