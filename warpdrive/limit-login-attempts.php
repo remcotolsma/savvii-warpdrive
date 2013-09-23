@@ -18,8 +18,6 @@ define('WarpdriveLLAErrorIdentifier', 'too_many_attempts');
 $GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'] = array(
     // Plugin stored version (for safe upgrades)
     'version' => 1
-    // Are we behind a proxy?
-    , 'remote_addr' => WarpdriveLLADirectAddr
     // Lock out after x amount of attempts
     , 'allowed_attempts' => 5
     // Lock out for x seconds
@@ -244,12 +242,6 @@ class WarpdriveLimitLoginAttempts {
         }
         $this->options['register_notify'] = $newArgs;
 
-        // Remote addr
-        if ($this->options['remote_addr'] != WarpdriveLLADirectAddr
-            && $this->options['remote_addr'] != WarpdriveLLAProxyAddr) {
-            $this->options['remote_addr'] = WarpdriveLLADirectAddr;
-        }
-
         return $options;
     }
 
@@ -310,18 +302,20 @@ class WarpdriveLimitLoginAttempts {
     private function getIpAddress($typeName='') {
         $type = $typeName;
         if (empty($type))
-            $type = $this->getOption('remote_addr');
+            $type = WarpdriveLLADirectAddr;
 
         // Get server value
-        if (isset($_SERVER[$type]))
+        if (!empty($typeName) && isset($_SERVER[$type]))
             return $_SERVER[$type];
 
-        // Not found, did we get a proxy type?
-        // If so, try to fall back to direct address
-        if (empty($typeName) && $type == WarpdriveLLAProxyAddr && isset($_SERVER[WarpdriveLLADirectAddr]))
-            // Client can send proxy addr header to fool us for which IP should be banned
+        // Not found, try direct address and then proxy address
+        if (isset($_SERVER[WarpdriveLLADirectAddr])) {
             return $_SERVER[WarpdriveLLADirectAddr];
+        } else if (isset($_SERVER[WarpdriveLLAProxyAddr])) {
+            return $_SERVER[WarpdriveLLAProxyAddr];
+        }
 
+        // Failsafe
         return '';
     }
 
@@ -1259,7 +1253,6 @@ class WarpdriveLimitLoginAttempts {
             check_admin_referer('warpdrive-limitloginattempts-options');
 
             // Set options with new values
-            $this->options['remote_addr'] = $_POST['optRemoteAddr'];
             $this->options['allowed_attempts'] = $_POST['optAllowedAttempts']+0;
             $this->options['lockout_duration'] = ($_POST['optLockoutDuration']+0) * 60;
             $this->options['allowed_lockouts'] = $_POST['optAllowedLockouts']+0;
@@ -1288,19 +1281,6 @@ class WarpdriveLimitLoginAttempts {
         }
 
         // Setup variables for admin page
-        // Connection type
-        $connectionType = $this->getOption('remote_addr');
-        $connectionGuess = isset($_SERVER[WarpdriveLLAProxyAddr]) ? WarpdriveLLAProxyAddr : WarpdriveLLADirectAddr;
-        $optConnectionDirect = $connectionType == WarpdriveLLADirectAddr ? ' checked' : '';
-        $optConnectionProxy  = $connectionType == WarpdriveLLAProxyAddr  ? ' checked' : '';
-
-        $connectionMessage = '';
-        if ($connectionType != $connectionGuess) {
-            $connectionCurrent = ($connectionGuess == WarpdriveLLADirectAddr) ? __('direct') : __('proxy');
-            $connectionSet     = ($connectionType  == WarpdriveLLADirectAddr) ? __('direct') : __('proxy');
-            $connectionMessage = '<br /><br />'.sprintf(__('<strong>Current connection setting appear to be invalid</strong>: You are using a %s connection while %s connection is set.', 'warpdrive'), $connectionCurrent, $connectionSet);
-        }
-
         // Cookies
         $optHandleCookies = $this->getOption('handle_cookies') ? ' checked' : '';
         // Notify on lockout
@@ -1371,22 +1351,6 @@ class WarpdriveLimitLoginAttempts {
                         <td><input type="text" name="optValidDuration" id="optValidDuration" value="<?php echo $this->getOption('valid_duration') / 3600; ?>"></td>
                     </tr>
 
-                    <tr><th align="left" style="font-size: 1.5em; padding-top: 1em;"><?php _e('Connection', 'warpdrive'); ?></th></tr>
-                    <tr>
-                        <td><?php echo $connectionMessage; ?></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>
-                                <input type="radio" name="optRemoteAddr"<?php echo $optConnectionDirect; ?> value="<?php echo WarpdriveLLADirectAddr; ?>" />
-                                <?php _e('Direct connection', 'warpdrive'); ?>
-                            </label><br />
-                            <label>
-                                <input type="radio" name="optRemoteAddr"<?php echo $optConnectionProxy; ?> value="<?php echo WarpdriveLLAProxyAddr; ?>" />
-                                <?php _e('Proxy connection', 'warpdrive'); ?>
-                            </label>
-                        </td>
-                    </tr>
                     <tr>
                         <td><label for="optHandleCookies"><?php _e('Handle cookie logins', 'warpdrive'); ?></label></td>
                         <td><input type="checkbox" name="optHandleCookies" id="optHandleCookies"<?php echo $optHandleCookies; ?> value="1" /></td>
