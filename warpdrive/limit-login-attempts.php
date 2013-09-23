@@ -516,10 +516,6 @@ class WarpdriveLimitLoginAttempts {
         if (in_array('log', $notifies)) {
             $this->notifyLog($username);
         }
-        // Email notify
-        if (in_array('email', $notifies)) {
-            $this->notifyEmail($username);
-        }
     }
 
     /**
@@ -532,10 +528,6 @@ class WarpdriveLimitLoginAttempts {
         // Log notify
         if (in_array('log', $notifies)) {
             $this->notifyLog($username, 'lockoutRegistrationLog');
-        }
-        // Email notify
-        if (in_array('email', $notifies)) {
-            $this->notifyEmail($username);
         }
     }
 
@@ -572,10 +564,6 @@ class WarpdriveLimitLoginAttempts {
 
         // Save log
         $this->saveList($logName, $log);
-    }
-
-    private function notifyEmail($username) {
-        // TODO: Send notification per email
     }
 
     /**************************************************
@@ -1323,7 +1311,6 @@ class WarpdriveLimitLoginAttempts {
         // Notify on lockout
         $notifyLockoutOptions = explode(',', $this->getOption('lockout_notify'));
         $optNotifyLockoutLog = in_array('log', $notifyLockoutOptions) ? ' checked' : '';
-        $optNotifyLockoutEmail = in_array('email', $notifyLockoutOptions) ? ' checked' : '';
         // Password reset levels
         $userLevels = array(
             0 => __('Subscriber'),
@@ -1337,7 +1324,6 @@ class WarpdriveLimitLoginAttempts {
         // New registrations
         $notifyLockoutOptions = explode(',', $this->getOption('register_notify'));
         $optNotifyLockoutRegisterLog = in_array('log', $notifyLockoutOptions) ? ' checked' : '';
-        $optNotifyLockoutRegisterEmail = in_array('email', $notifyLockoutOptions) ? ' checked' : '';
 
         ?>
         <div class="wrap">
@@ -1419,10 +1405,6 @@ class WarpdriveLimitLoginAttempts {
                                 <?php _e('Register in log', 'warpdrive'); ?>
                             </label><br />
                             <label>
-                                <input type="checkbox" name="optNotifyLockoutEmail"<?php echo $optNotifyLockoutEmail; ?> value="1" />
-                                <?php _e('Send email after', 'warpdrive'); ?>
-                            </label>
-                            <label>
                                 <input type="text" name="optEmailAfter" size="3" maxlength="4" value="<?php echo $this->getOption('email_after'); ?>" />
                                 <?php __('lockouts.', 'warpdrive'); ?>
                             </label>
@@ -1475,10 +1457,6 @@ class WarpdriveLimitLoginAttempts {
                                 <input type="checkbox" name="optNotifyLockoutRegisterLog"<?php echo $optNotifyLockoutRegisterLog; ?> value="1" />
                                 <?php _e('Register in log', 'warpdrive'); ?>
                             </label><br />
-                            <label>
-                                <input type="checkbox" name="optNotifyLockoutRegisterEmail"<?php echo $optNotifyLockoutRegisterEmail; ?> value="1" />
-                                <?php _e('Send email', 'warpdrive'); ?>
-                            </label>
                         </td>
                     </tr>
                 </table>
