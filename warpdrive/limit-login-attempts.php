@@ -28,8 +28,6 @@ $GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'] = array(
     , 'lockout_long_duration' => 86400 // 24 hours
     // Reset failed attempts after x seconds
     , 'valid_duration' => 43200 // 12 hours
-    // Limit malformed/forged cookies?
-    , 'handle_cookies' => true
     // Notify on lockout, valid values: '', 'log', 'email', 'log,email'
     , 'lockout_notify' => 'log'
     // If notify by email, send email after x lock outs
@@ -116,17 +114,15 @@ class WarpdriveLimitLoginAttempts {
         add_filter('shake_error_codes', array($this, 'shakeFailure'));
 
         // Handle auth cookies?
-        if ($this->getOption('handle_cookies')) {
-            add_action('plugins_loaded', array($this, 'handleCookie'), 999);
-            add_action('auth_cookie_bad_hash', array($this, 'wpCookieFailed'));
+        add_action('plugins_loaded', array($this, 'handleCookie'), 999);
+        add_action('auth_cookie_bad_hash', array($this, 'wpCookieFailed'));
 
-            global $wp_version;
+        global $wp_version;
 
-            // Only add action if WP version is >= 3.0
-            if (version_compare($wp_version, '3.0', '>=')) {
-                add_action('auth_cookie_bad_hash', array($this, 'wpCookieFailedHash'));
-                add_action('auth_cookie_valid', array($this, 'cookieValid'), 10, 2);
-            }
+        // Only add action if WP version is >= 3.0
+        if (version_compare($wp_version, '3.0', '>=')) {
+            add_action('auth_cookie_bad_hash', array($this, 'wpCookieFailedHash'));
+            add_action('auth_cookie_valid', array($this, 'cookieValid'), 10, 2);
         }
 
         // TODO: Change action to authenticate filter, this probably will be deprecated
@@ -1258,7 +1254,6 @@ class WarpdriveLimitLoginAttempts {
             $this->options['allowed_lockouts'] = $_POST['optAllowedLockouts']+0;
             $this->options['lockout_long_duration'] = ($_POST['optLockoutLongDuration']+0) * 3600;
             $this->options['valid_duration'] = ($_POST['optValidDuration']+0) * 3600;
-            $this->options['handle_cookies'] = ($_POST['optHandleCookies']+0) == 1;
             $lockoutNotify = array();
             if ($_POST['optNotifyLockoutLog']+0)
                 $lockoutNotify[] = 'log';
@@ -1281,8 +1276,6 @@ class WarpdriveLimitLoginAttempts {
         }
 
         // Setup variables for admin page
-        // Cookies
-        $optHandleCookies = $this->getOption('handle_cookies') ? ' checked' : '';
         // Notify on lockout
         $notifyLockoutOptions = explode(',', $this->getOption('lockout_notify'));
         $optNotifyLockoutLog = in_array('log', $notifyLockoutOptions) ? ' checked' : '';
@@ -1350,12 +1343,6 @@ class WarpdriveLimitLoginAttempts {
                         <td><label for="optValidDuration" title=""><?php _e('Time until attempts are reset (hours)', 'warpdrive'); ?></label></td>
                         <td><input type="text" name="optValidDuration" id="optValidDuration" value="<?php echo $this->getOption('valid_duration') / 3600; ?>"></td>
                     </tr>
-
-                    <tr>
-                        <td><label for="optHandleCookies"><?php _e('Handle cookie logins', 'warpdrive'); ?></label></td>
-                        <td><input type="checkbox" name="optHandleCookies" id="optHandleCookies"<?php echo $optHandleCookies; ?> value="1" /></td>
-                    </tr>
-
                     <tr><th align="left" style="font-size: 1.5em; padding-top: 1em;"><?php _e('Notify on lockout', 'warpdrive'); ?></th></tr>
                     <tr>
                         <td colspan="2">
