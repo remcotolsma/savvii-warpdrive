@@ -1269,18 +1269,13 @@ class WarpdriveLimitLoginAttempts {
             $lockoutNotify = array();
             if ($_POST['optNotifyLockoutLog']+0)
                 $lockoutNotify[] = 'log';
-            if ($_POST['optNotifyLockoutEmail']+0)
-                $lockoutNotify[] = 'email';
             $this->options['lockout_notify'] = join(',', $lockoutNotify);
-            $this->options['email_after'] = $_POST['optEmailAfter']+0;
             $this->options['limit_register'] = $_POST['optLimitRegister']+0 == 1;
             $this->options['register_amount'] = $_POST['optRegisterAmount']+0;
             $this->options['register_duration'] = ($_POST['optRegisterDuration']+0) * 3600;
             $lockoutNotify = array();
             if ($_POST['optNotifyLockoutRegisterLog']+0)
                 $lockoutNotify[] = 'log';
-            if ($_POST['optNotifyLockoutRegisterEmail']+0)
-                $lockoutNotify[] = 'email';
             $this->options['register_notify'] = join(',', $lockoutNotify);
             $this->options['reset_pwd_by_username_disable'] = ($_POST['optDisablePwdResetByUsername']+0) == 1;
             $this->options['reset_pwd_by_username_level'] = $_POST['optDisablePwdResetByUsernameFrom']+0;
