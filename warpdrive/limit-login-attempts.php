@@ -428,7 +428,7 @@ class WarpdriveLimitLoginAttempts {
             $attempts = $this->getList('attempts');
         }
         if (is_null($valid) || !is_array($valid))
-            $valid = $this->getList('valid');
+            $valid = $this->getList('attemptsValid');
 
         $changed = false;
         foreach ($valid as $ip => $time) {
