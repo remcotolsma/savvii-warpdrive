@@ -1363,10 +1363,6 @@ class WarpdriveLimitLoginAttempts {
                                 <input type="checkbox" name="optNotifyLockoutLog"<?php echo $optNotifyLockoutLog; ?> value="1" />
                                 <?php _e('Register in log', 'warpdrive'); ?>
                             </label><br />
-                            <label>
-                                <input type="text" name="optEmailAfter" size="3" maxlength="4" value="<?php echo $this->getOption('email_after'); ?>" />
-                                <?php __('lockouts.', 'warpdrive'); ?>
-                            </label>
                         </td>
                     </tr>
 
