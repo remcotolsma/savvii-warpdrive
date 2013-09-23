@@ -1236,24 +1236,16 @@ class WarpdriveLimitLoginAttempts {
 
         // Check various GET fields for option resets
         // Should we reset lockoutTotal?
-        if (isset($_GET['reset_lockout_statistic'])) {
-            $this->setStatistic('lockoutTotal', 0);
-            $this->adminMessage(__('Reset lockout total statistic', 'warpdrive'));
-        }
-        // Should we clear current lockout list?
-        if (isset($_GET['reset_lockout_current'])) {
+        if (isset($_GET['reset_lockouts'])) {
             $this->saveList('lockouts', array());
-            $this->adminMessage(__('Reset current lockout list', 'warpdrive'));
+            $this->setStatistic('lockoutTotal', 0);
+            $this->adminMessage(__('Lockouts reset', 'warpdrive'));
         }
         // Should we reset lockoutRegisterTotal?
-        if (isset($_GET['reset_lockout_register_statistic'])) {
-            $this->setStatistic('lockoutRegisterTotal', 0);
-            $this->adminMessage(__('Reset regiser lockout total statistic', 'warpdrive'));
-        }
-        // Should we reset lockoutRegister?
-        if (isset($_GET['reset_lockout_register_current'])) {
+        if (isset($_GET['reset_lockouts_register'])) {
             $this->saveList('lockoutsRegister', array());
-            $this->adminMessage(__('Reset current register lockout list', 'warpdrive'));
+            $this->setStatistic('lockoutRegisterTotal', 0);
+            $this->adminMessage(__('Regiser lockout reset', 'warpdrive'));
         }
 
         // Make sure if post, that post was from this page
@@ -1313,23 +1305,20 @@ class WarpdriveLimitLoginAttempts {
                 <tr>
                     <td></td>
                     <th align="left"><?php _e('Total'); ?></th>
-                    <th></th>
                     <th align="left"><?php _e('Active'); ?></th>
                     <th></th>
                 </tr>
                 <tr>
                     <th align="left"><?php _e('Login lockouts', 'warpdrive'); ?></th>
                     <td align="right"><?php echo $this->getStatistic('lockoutTotal'); ?></td>
-                    <td><small><a href="<?php echo admin_url('admin.php?page=warpdrive_limitloginattempts&reset_lockout_statistic=1'); ?>">Reset</a></small></td>
                     <td align="right"><?php echo count($this->getList('lockouts')); ?></td>
-                    <td><small><a href="<?php echo admin_url('admin.php?page=warpdrive_limitloginattempts&reset_lockout_current=1'); ?>">Reset</a></small></td>
+                    <td><small><a href="<?php echo admin_url('admin.php?page=warpdrive_limitloginattempts&reset_lockouts=1'); ?>">Reset</a></small></td>
                 </tr>
                 <tr>
                     <th align="left"><?php _e('Registration lockouts', 'warpdrive'); ?></th>
                     <td align="right"><?php echo $this->getStatistic('lockoutRegisterTotal'); ?></td>
-                    <td><small><a href="<?php echo admin_url('admin.php?page=warpdrive_limitloginattempts&reset_lockout_register_statistic=1'); ?>">Reset</a></small></td>
                     <td align="right"><?php echo count($this->getList('lockoutsRegister')); ?></td>
-                    <td><small><a href="<?php echo admin_url('admin.php?page=warpdrive_limitloginattempts&reset_lockout_register_current=1'); ?>">Reset</a></small></td>
+                    <td><small><a href="<?php echo admin_url('admin.php?page=warpdrive_limitloginattempts&reset_lockouts_register=1'); ?>">Reset</a></small></td>
                 </tr>
             </table>
             <h3><?php _e('Limit Login Attempts Options', 'warpdrive'); ?></h3>
