@@ -254,6 +254,9 @@ class Warpdrive {
                 $this->add_option(WARPDRIVE_OPT_SITE_NAME, $site['system_name']);
                 $this->add_option(WARPDRIVE_OPT_CDN_ENABLED, 1);
                 // Flush cache
+                if (!class_exists('Evvii_Cache')) {
+                    require BASE.'warpdrive/evvii-cache.php';
+                }
                 $flush = new Evvii_Cache();
                 $flush->execute_flush(true);
             } else {
