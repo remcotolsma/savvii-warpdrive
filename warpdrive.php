@@ -3,7 +3,7 @@
  * Plugin name: Warpdrive
  * Plugin URI: https://github.com/Savvii/warpdrive
  * Description: Hosting plugin for Savvii
- * Version: 0.12
+ * Version: 0.13
  * Author: Ferdi van der Werf <ferdi@savvii.nl>
  * Author URI:
  * License: All rights remain with Savvii
@@ -254,6 +254,9 @@ class Warpdrive {
                 $this->add_option(WARPDRIVE_OPT_SITE_NAME, $site['system_name']);
                 $this->add_option(WARPDRIVE_OPT_CDN_ENABLED, 1);
                 // Flush cache
+                if (!class_exists('Evvii_Cache')) {
+                    require BASE.'warpdrive/evvii-cache.php';
+                }
                 $flush = new Evvii_Cache();
                 $flush->execute_flush(true);
             } else {
