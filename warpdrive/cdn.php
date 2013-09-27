@@ -129,6 +129,12 @@ class WarpdriveCdn {
             return false;
         }
 
+        // If we do not have a site_name, we cannot rewrite to cdn links,
+        // thus we should not use ob
+        if (is_null(Warpdrive::get_option(WARPDRIVE_OPT_SITE_NAME))) {
+            return false;
+        }
+
         // True in all other cases
         return true;
     }
