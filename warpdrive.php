@@ -218,7 +218,6 @@ class Warpdrive {
         $result = $http->request($url, array(
             'method' => 'GET',
             'httpversion' => '1.1',
-            'sslverify' => false,
             'headers' => array(
                 'Authorization' => 'Token token="'.$token.'"',
             ),
