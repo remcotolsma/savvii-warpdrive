@@ -120,15 +120,15 @@ class Evvii_Cache {
     }
 
     public function msg_flushed_message() {
-        echo '<div class="updated fade"><p><strong>'.__('Cache flushed!', 'warpdrive').'</strong></p></div>';
+        ?><div class="updated fade"><p><strong><?php _e('Cache flushed!', 'warpdrive') ?></strong></p></div><?php
     }
 
     public function msg_flush_failed() {
-        echo '<div class="updated fade"><p><strong>'.__('Cache could not be flushed! Tech team has been notified!', 'warpdrive').'</strong></p></div>';
+        ?><div class="updated fade"><p><strong><?php _e('Cache could not be flushed! Tech team has been notified!', 'warpdrive') ?></strong></p></div><?php
     }
 
     public function msg_flush_failed_token() {
-        echo '<div class="updated fade"><p><strong>'.__('Cache could not be flushed! Administration token has not been set!', 'warpdrive').'</strong></p></div>';
+        ?><div class="updated fade"><p><strong><?php _e('Cache could not be flushed! Administration token has not been set!', 'warpdrive') ?></strong></p></div><?php
     }
 
 }
