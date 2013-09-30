@@ -14,44 +14,42 @@ define('WARPDRIVE_LLA_DIRECT_ADDR', 'REMOTE_ADDR');
 define('WARPDRIVE_LLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR');
 define('WARPDRIVE_LLA_ERROR_IDENTIFIER', 'too_many_attempts');
 
-// Load options at runtime
-$GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'] = array(
-    // Plugin stored version (for safe upgrades)
-    'version' => 1
-    // Lock out after x amount of attempts
-    , 'allowed_attempts' => 5
-    // Lock out for x seconds
-    , 'lockout_duration' => 1200 // 20 minutes
-    // Long lock out after x lock outs
-    , 'allowed_lockouts' => 3
-    // Long lock out duration
-    , 'lockout_long_duration' => 86400 // 24 hours
-    // Reset failed attempts after x seconds
-    , 'valid_duration' => 43200 // 12 hours
-    // Notify on lockout, valid values: '', 'log', 'email', 'log,email'
-    , 'lockout_notify' => 'log'
-    // If notify by email, send email after x lock outs
-    , 'email_after' => 3
-    // Enforce limit on new user registration for IP
-    , 'limit_register' => true
-    // Allow x new user registrations for IP
-    , 'register_amount' => 3
-    // Above, during x seconds
-    , 'register_duration' => 86400 // 24 hours
-    // Notify on register lockout, valid values: '', 'log', 'email', 'log,email'
-    , 'register_notify' => 'log'
-    // Disable password reset using login name
-    , 'reset_pwd_by_username_disable' => true
-    // Above for capability level_x or higher
-    , 'reset_pwd_by_username_level' => 1
-    // Disable all password resets?
-    , 'reset_pwd_disable' => false
-    // Above for capability level_x or higher
-    , 'reset_pwd_level' => 1
-);
-
-
 class WarpdriveLimitLoginAttempts {
+
+    private $default_options = array(
+        // Plugin stored version (for safe upgrades)
+        'version' => 1
+        // Lock out after x amount of attempts
+    , 'allowed_attempts' => 5
+        // Lock out for x seconds
+    , 'lockout_duration' => 1200 // 20 minutes
+        // Long lock out after x lock outs
+    , 'allowed_lockouts' => 3
+        // Long lock out duration
+    , 'lockout_long_duration' => 86400 // 24 hours
+        // Reset failed attempts after x seconds
+    , 'valid_duration' => 43200 // 12 hours
+        // Notify on lockout, valid values: '', 'log', 'email', 'log,email'
+    , 'lockout_notify' => 'log'
+        // If notify by email, send email after x lock outs
+    , 'email_after' => 3
+        // Enforce limit on new user registration for IP
+    , 'limit_register' => true
+        // Allow x new user registrations for IP
+    , 'register_amount' => 3
+        // Above, during x seconds
+    , 'register_duration' => 86400 // 24 hours
+        // Notify on register lockout, valid values: '', 'log', 'email', 'log,email'
+    , 'register_notify' => 'log'
+        // Disable password reset using login name
+    , 'reset_pwd_by_username_disable' => true
+        // Above for capability level_x or higher
+    , 'reset_pwd_by_username_level' => 1
+        // Disable all password resets?
+    , 'reset_pwd_disable' => false
+        // Above for capability level_x or higher
+    , 'reset_pwd_level' => 1
+    );
 
     /**
      * Have we shown our error?
@@ -163,9 +161,8 @@ class WarpdriveLimitLoginAttempts {
             get_site_option(WARPDRIVE_LLA_OPTIONS) : get_option(WARPDRIVE_LLA_OPTIONS);
 
         // If there are no options, use default options
-        $defaults = &$GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'];
         if (!is_array($this->options)) {
-            $this->options = $defaults;
+            $this->options = $this->default_options;
         }
     }
 
@@ -193,7 +190,7 @@ class WarpdriveLimitLoginAttempts {
      * @return mixed
      */
     public function sanitizeOptions($options) {
-        $defaults = &$GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'];
+        $defaults = $this->default_options;
 
         // Sanitize options
         foreach ($this->options as $name=>$value) {
@@ -248,7 +245,7 @@ class WarpdriveLimitLoginAttempts {
      * @return mixed Casted value
      */
     public function castOption($name, $value) {
-        $defaults = &$GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'];
+        $defaults = $this->default_options;
         // Is this a valid option?
         if (!isset($defaults[$name]))
             return null;
@@ -1255,7 +1252,7 @@ class WarpdriveLimitLoginAttempts {
 
             // Check if we want to reset settings to default
             if (isset($_POST['reset_to_defaults'])) {
-                $this->options = $GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'];
+                $this->options = $this->default_options;
                 $this->saveOptions();
                 $this->adminMessage(__('Options reset to defaults', 'warpdrive'));
             } else {
