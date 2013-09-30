@@ -929,6 +929,7 @@ class WarpdriveLimitLoginAttempts {
     public function cookieValid($cookieElement, $user) {
         if (get_user_meta($user->ID, 'warpdriveLLA_prevCookie'))
             delete_user_meta($user->ID, 'warpdriveLLA_prevCookie');
+        // TODO: Clear attempts for this IP address
     }
 
     /**
