@@ -33,8 +33,8 @@ class WarpdriveReadLogs {
 
     public function readlogs_page() {
         // Show contents
-        echo '<h2>'.__('Read logs', 'warpdrive').'</h2>';
-        echo '
+        printf('<h2>%s</h2>', __('Read logs', 'warpdrive'));
+        ?>
         <style type="text/css">
             #warpdrive-readlogs-head th {
                 text-align: left;
@@ -46,22 +46,23 @@ class WarpdriveReadLogs {
         </style>
         <table id="warpdrive-readlogs-head">
             <tr>
-                <th>'.__('Log', 'warpdrive').'</th>
-                <th>'.__('Last lines in the file', 'warpdrive').'</th>
+                <th><?php _e('Log', 'warpdrive') ?></th>
+                <th><?php _e('Last lines in the file', 'warpdrive') ?></th>
             </tr>
             <tr>
-                <td>'.__('Access log', 'warpdrive').'</td>
+                <td><?php _e('Access log', 'warpdrive') ?></td>
                 <td>
-                    <a href="'.admin_url('admin.php?page=warpdrive_readlogs&file=access&lines=10').'">'.__('10 lines', 'warpdrive').'</a> &nbsp;
-                    <a href="'.admin_url('admin.php?page=warpdrive_readlogs&file=access&lines=100').'" >'.__('100 lines', 'warpdrive').'</a>
+                    <a href="<?php p_raw(admin_url('admin.php?page=warpdrive_readlogs&file=access&lines=10')) ?>'"><?php _e('10 lines', 'warpdrive') ?></a> &nbsp;
+                    <a href="<?php p_raw(admin_url('admin.php?page=warpdrive_readlogs&file=access&lines=100')) ?>"><?php _e('100 lines', 'warpdrive') ?></a>
             </tr>
             <tr>
-                <td>'.__('Error log', 'warpdrive').'</td>
+                <td><?php _e('Error log', 'warpdrive') ?></td>
                 <td>
-                    <a href="'.admin_url('admin.php?page=warpdrive_readlogs&file=error&lines=10').'">'.__('10 lines', 'warpdrive').'</a> &nbsp;
-                    <a href="'.admin_url('admin.php?page=warpdrive_readlogs&file=error&lines=100').'" >'.__('100 lines', 'warpdrive').'</a>
+                    <a href="<?php p_raw(admin_url('admin.php?page=warpdrive_readlogs&file=error&lines=10')) ?>"><?php _e('10 lines', 'warpdrive') ?></a> &nbsp;
+                    <a href="<?php p_raw(admin_url('admin.php?page=warpdrive_readlogs&file=error&lines=100')) ?>" ><?php _e('100 lines', 'warpdrive') ?></a>
             </tr>
-        </table>';
+        </table>
+        <?php
 
         $file_regexp = null;
         $name = null;
@@ -94,19 +95,19 @@ class WarpdriveReadLogs {
             $file_lines = array_reverse(array_slice($file_lines, -1 * $lines));
             $total_lines = count($file_lines);
 
-            echo '<div style="font-size: 2em; margin-top: 1em;">'.$name.'</div>';
+            printf('<div style="font-size: 2em; margin-top: 1em;">%s</div>', h($name));
             if ($total_lines) {
-                echo '<ol>';
+                p_raw('<ol>');
                 foreach ($file_lines as $line) {
-                    echo "<li>".sanitize_text_field($line)."</li>";
+                    printf("<li>%s</li>", h($line));
                 }
-                echo '</ol>';
+                p_raw('</ol>');
             } else {
-                echo '<p style="padding:  5px; color: #D00;">'.__('No content in log', 'warpdrive').'</p>';
+                printf('<p style="padding:  5px; color: #D00;">%s</p>', __('No content in log', 'warpdrive'));
             }
 
         } else {
-            echo '<p style="color: #D00; font-weight: bold;">File not found! Please contact <a href="http://support.savvii.nl/" target="_blank">support</a>.</p>';
+            printf('<p style="color: #D00; font-weight: bold;">File not found! Please contact <a href="http://support.savvii.nl/" target="_blank">support</a>.</p>');
         }
     }
 }
