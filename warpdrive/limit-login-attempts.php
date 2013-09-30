@@ -240,7 +240,7 @@ class WarpdriveLimitLoginAttempts {
             if (in_array($arg, $allowed))
                 $newArgs[] = $arg;
         }
-        $this->options['lockout_notify'] = $newArgs;
+        $this->options['lockout_notify'] = join(",", $newArgs);
 
         // Register notify
         $allowed = explode(',', WARPDRIVE_LLA_NOTIFY_METHODS);
@@ -250,7 +250,7 @@ class WarpdriveLimitLoginAttempts {
             if (in_array($arg, $allowed))
                 $newArgs[] = $arg;
         }
-        $this->options['register_notify'] = $newArgs;
+        $this->options['register_notify'] = join(",", $newArgs);
     }
 
     /**
