@@ -49,6 +49,14 @@ function p($text) {
 }
 
 /**
+ * Echo raw $text
+ * @param string $text Text to echo
+ */
+function p_raw($text) {
+    echo $text;
+}
+
+/**
  * Warpdrive class
  */
 class Warpdrive {
