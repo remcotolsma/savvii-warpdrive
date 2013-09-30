@@ -281,6 +281,14 @@ class Warpdrive {
         }
     }
 
+    public function admin_head_info($text) {
+        ?>
+        <div class="updated fade">
+            <p><?php p($text); ?></p>
+        </div>
+        <?php
+    }
+
     public function dashboard_page() {
         // Access token for Evvii
         if (isset($_POST[WARPDRIVE_FORM_TOKEN])) {
@@ -290,7 +298,7 @@ class Warpdrive {
             $site = $this->get_site_from_evvii($token);
             if (is_array($site)) {
                 // Save token and site name
-                echo '<h2>'._('Access token saved!').'</h2>';
+                $this->admin_head_info(_('Access token saved!'));
                 $this->add_option(WARPDRIVE_OPT_ACCESS_TOKEN, $token);
                 $this->add_option(WARPDRIVE_OPT_SITE_NAME, $site['system_name']);
                 $this->add_option(WARPDRIVE_OPT_CDN_ENABLED, 1);
@@ -302,7 +310,7 @@ class Warpdrive {
                 $flush->execute_flush(true);
             } else {
                 // Token failed, show error
-                echo '<h2>'._('Incorrect access token provided!').'</h2>';
+                $this->admin_head_info(_('Incorrect access token provided!'));
                 // Remove old token and site name from database
                 $this->delete_option(WARPDRIVE_OPT_ACCESS_TOKEN);
                 $this->delete_option(WARPDRIVE_OPT_SITE_NAME);
@@ -316,7 +324,7 @@ class Warpdrive {
             $cdn_enabled = intval($_POST[WARPDRIVE_FORM_CDN_ENABLED]);
             // Save to database
             Warpdrive::update_option(WARPDRIVE_OPT_CDN_ENABLED, $cdn_enabled);
-            echo '<h2>'._('CDN choice saved!').'</h2>';
+            $this->admin_head_info(_('CDN choice saved!'));
             // Flush cache
             $flush = new Evvii_Cache();
             $flush->execute_flush(true);
