@@ -197,6 +197,41 @@ class WarpdriveLimitLoginAttempts {
 
         // Specific sanitation follows
 
+        // Allowed attempts
+        if ($this->options['allowed_attempts'] <= 0) {
+            $this->options['allowed_attempts'] = 1; // Smallest is 1 attempt
+        }
+
+        // Lockout duration
+        if ($this->options['lockout_duration'] <= 60) {
+            $this->options['lockout_duration'] = 60; // Smallest is 60 seconds, aka 1 minute
+        }
+
+        // Allowed lockouts
+        if ($this->options['allowed_lockouts'] <= 0) {
+            $this->options['allowed_lockouts'] = 1; // Smallest is 1 lockout before extended lockout
+        }
+
+        // Extended lockout duration
+        if ($this->options['lockout_long_duration'] <= 3600) {
+            $this->options['lockout_long_duration'] = 3600; // Smallest is 3600 seconds, aka 1 hour
+        }
+
+        // Attempt remember duration
+        if ($this->options['valid_duration'] <= 3600) {
+            $this->options['valid_duration'] = 3600; // Smallest is 3600 seconds, aka 1 hour
+        }
+
+        // Registration attempts
+        if ($this->options['register_amount'] <= 0) {
+            $this->options['register_amount'] = 1; // Smallest is 1 registration
+        }
+
+        // Registration lockout duration
+        if ($this->options['register_duration'] <= 3600) {
+            $this->options['register_duration'] = 3600; // Smallest is 3600 seconds, aka 1 hour
+        }
+
         // Lockout notify
         $allowed = explode(',', WARPDRIVE_LLA_NOTIFY_METHODS);
         $args = explode(',', $this->options['lockout_notify']);
@@ -216,8 +251,6 @@ class WarpdriveLimitLoginAttempts {
                 $newArgs[] = $arg;
         }
         $this->options['register_notify'] = $newArgs;
-
-        return $options;
     }
 
     /**
@@ -1249,7 +1282,7 @@ class WarpdriveLimitLoginAttempts {
                 $this->options['reset_pwd_disable'] = intval($_POST['optDisablePwdReset']) == 1;
                 $this->options['reset_pwd_level'] = intval($_POST['optDisablePwdResetFrom']);
 
-                $this->options = $this->sanitizeOptions($this->options);
+                $this->sanitizeOptions($this->options);
                 $this->saveOptions();
                 $this->adminMessage(__('Options changed', 'warpdrive'));
             }
