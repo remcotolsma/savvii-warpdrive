@@ -342,7 +342,7 @@ class Warpdrive {
                 <table>
                     <tr>
                         <td><?php _e('Access token:', 'warpdrive'); ?></td>
-                        <td><input type="text" name="<?php echo WARPDRIVE_FORM_TOKEN; ?>" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>" /></td>
+                        <td><input type="text" name="<?php p(WARPDRIVE_FORM_TOKEN); ?>" value="<?php p($token) ?>" /></td>
                     </tr>
                     <tr>
                         <td>&nbsp;</td>
