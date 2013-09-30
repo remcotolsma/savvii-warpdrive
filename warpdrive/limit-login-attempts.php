@@ -67,11 +67,6 @@ class WarpdriveLimitLoginAttempts {
      */
     private $feNonEmptyCredentials = false;
     /**
-     * Statistics, stored in option table
-     * @var object
-     */
-    private $feStatistics = null;
-    /**
      * Options of limit login attempts module
      * @var null
      */
