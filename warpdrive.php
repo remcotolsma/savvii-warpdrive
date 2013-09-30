@@ -56,6 +56,12 @@ function p_raw($text) {
     echo $text;
 }
 
+function debug($var) {
+    p_raw('<pre>');
+    var_dump($var);
+    p_raw('</pre>');
+}
+
 /**
  * Warpdrive class
  */

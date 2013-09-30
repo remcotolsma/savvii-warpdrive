@@ -1449,10 +1449,4 @@ class WarpdriveLimitLoginAttempts {
     }
 }
 
-function debug($var) {
-    echo '<pre>';
-    var_dump($var);
-    echo '</pre>';
-}
-
 add_action('init', array('WarpdriveLimitLoginAttempts', 'init'));
