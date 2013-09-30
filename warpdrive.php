@@ -347,8 +347,8 @@ class Warpdrive {
             <form action="" method="post">
                 <table>
                     <tr>
-                        <td><?php _e('Access token:', 'warpdrive'); ?></td>
-                        <td><input type="text" name="<?php p(WARPDRIVE_FORM_TOKEN); ?>" value="<?php p($token) ?>" /></td>
+                        <td><label for="<?php p(WARPDRIVE_FORM_TOKEN) ?>"><?php _e('Access token:', 'warpdrive'); ?></label></td>
+                        <td><input id="<?php p(WARPDRIVE_FORM_TOKEN) ?>" type="text" name="<?php p(WARPDRIVE_FORM_TOKEN); ?>" value="<?php p($token) ?>" /></td>
                     </tr>
                     <tr>
                         <td>&nbsp;</td>
@@ -358,20 +358,20 @@ class Warpdrive {
             </form>
 
             <h3><?php _e('Savvii CDN', 'warpdrive') ?></h3>
-            <div><?php _e('Here you can enable or disable the usage of Savvii\'s CDN', 'warpdrive'); ?></div>
 <?php
             if ($token == '') {
-                echo '<div>'._('CDN option cannot be changed until a valid access token is set.').'</div>';
+                _e('CDN option cannot be changed until a valid access token is set.');
             } else {
                 // Token is set
+                _e('Here you can enable or disable the usage of Savvii\'s CDN', 'warpdrive');
 ?>
             <form action="" method="post">
                 <label>
-                    <input type="radio" name="<?php echo WARPDRIVE_FORM_CDN_ENABLED; ?>" value="1" <?php if ($cdn_enabled) echo ' checked'; ?>/>
+                    <input type="radio" name="<?php p(WARPDRIVE_FORM_CDN_ENABLED) ?>" value="1" <?php if ($cdn_enabled) p(' checked'); ?>/>
                     <?php _e('Enabled', 'warpdrive'); ?>
                 </label><br />
                 <label>
-                    <input type="radio" name="<?php echo WARPDRIVE_FORM_CDN_ENABLED; ?>" value="0" <?php if (!$cdn_enabled) echo ' checked'; ?>/>
+                    <input type="radio" name="<?php p(WARPDRIVE_FORM_CDN_ENABLED) ?>" value="0" <?php if (!$cdn_enabled) p(' checked'); ?>/>
                     <?php _e('Disabled', 'warpdrive'); ?>
                 </label><br />
                 <input type="submit" value="<?php _e('Save CDN choice') ?>">
