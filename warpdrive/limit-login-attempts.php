@@ -7,12 +7,12 @@
  * @author Ferdi van der Werf <ferdi@savvii.nl>
  */
 
-define('WarpdriveLLAOptions', 'warpdrive-limit-login-attempts');
-define('WarpdriveLLAOptionsAutoLoad', 'lockouts');
-define('WarpdriveLLANotifyMethods', 'log,email');
-define('WarpdriveLLADirectAddr', 'REMOTE_ADDR');
-define('WarpdriveLLAProxyAddr', 'HTTP_X_FORWARDED_FOR');
-define('WarpdriveLLAErrorIdentifier', 'too_many_attempts');
+define('WARPDRIVE_LLA_OPTIONS', 'warpdrive-limit-login-attempts');
+define('WARPDRIVE_LLA_OPT_AUTOLOAD', 'lockouts');
+define('WARPDRIVE_LLA_NOTIFY_METHODS', 'log,email');
+define('WARPDRIVE_LLA_DIRECT_ADDR', 'REMOTE_ADDR');
+define('WARPDRIVE_LLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR');
+define('WARPDRIVE_LLA_ERROR_IDENTIFIER', 'too_many_attempts');
 
 // Load options at runtime
 $GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'] = array(
@@ -160,7 +160,7 @@ class WarpdriveLimitLoginAttempts {
     public function initOptions() {
         // Load from database
         $this->options = $this->isMultisite() ?
-            get_site_option(WarpdriveLLAOptions) : get_option(WarpdriveLLAOptions);
+            get_site_option(WARPDRIVE_LLA_OPTIONS) : get_option(WARPDRIVE_LLA_OPTIONS);
 
         // If there are no options, use default options
         $defaults = &$GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'];
@@ -175,15 +175,15 @@ class WarpdriveLimitLoginAttempts {
     private function saveOptions() {
         // Try to save options to database
         if ($this->isMultisite()) {
-            if (get_site_option(WarpdriveLLAOptions) === false)
-                add_site_option(WarpdriveLLAOptions, $this->options, '', true);
+            if (get_site_option(WARPDRIVE_LLA_OPTIONS) === false)
+                add_site_option(WARPDRIVE_LLA_OPTIONS, $this->options, '', true);
             else
-                update_site_option(WarpdriveLLAOptions, $this->options);
+                update_site_option(WARPDRIVE_LLA_OPTIONS, $this->options);
         } else {
-            if (get_option(WarpdriveLLAOptions) === false)
-                add_option(WarpdriveLLAOptions, $this->options, '', true);
+            if (get_option(WARPDRIVE_LLA_OPTIONS) === false)
+                add_option(WARPDRIVE_LLA_OPTIONS, $this->options, '', true);
             else
-                update_option(WarpdriveLLAOptions, $this->options);
+                update_option(WARPDRIVE_LLA_OPTIONS, $this->options);
         }
     }
 
@@ -219,7 +219,7 @@ class WarpdriveLimitLoginAttempts {
         $this->options['email_after'] = min($this->options['allowed_lockouts'], $emailAfter);
 
         // Lockout notify
-        $allowed = explode(',', WarpdriveLLANotifyMethods);
+        $allowed = explode(',', WARPDRIVE_LLA_NOTIFY_METHODS);
         $args = explode(',', $this->options['lockout_notify']);
         $newArgs = array();
         foreach ($args as $arg) {
@@ -229,7 +229,7 @@ class WarpdriveLimitLoginAttempts {
         $this->options['lockout_notify'] = $newArgs;
 
         // Register notify
-        $allowed = explode(',', WarpdriveLLANotifyMethods);
+        $allowed = explode(',', WARPDRIVE_LLA_NOTIFY_METHODS);
         $args = explode(',', $this->options['register_notify']);
         $newArgs = array();
         foreach ($args as $arg) {
@@ -298,17 +298,17 @@ class WarpdriveLimitLoginAttempts {
     private function getIpAddress($typeName='') {
         $type = $typeName;
         if (empty($type))
-            $type = WarpdriveLLADirectAddr;
+            $type = WARPDRIVE_LLA_DIRECT_ADDR;
 
         // Get server value
         if (!empty($typeName) && isset($_SERVER[$type]))
             return $_SERVER[$type];
 
         // Not found, try direct address and then proxy address
-        if (isset($_SERVER[WarpdriveLLADirectAddr])) {
-            return $_SERVER[WarpdriveLLADirectAddr];
-        } else if (isset($_SERVER[WarpdriveLLAProxyAddr])) {
-            return $_SERVER[WarpdriveLLAProxyAddr];
+        if (isset($_SERVER[WARPDRIVE_LLA_DIRECT_ADDR])) {
+            return $_SERVER[WARPDRIVE_LLA_DIRECT_ADDR];
+        } else if (isset($_SERVER[WARPDRIVE_LLA_PROXY_ADDR])) {
+            return $_SERVER[WARPDRIVE_LLA_PROXY_ADDR];
         }
 
         // Failsafe
@@ -366,7 +366,7 @@ class WarpdriveLimitLoginAttempts {
         $exists = $this->isMultisite() ? get_site_option($listName) : get_option($listName);
         if ($exists === false) {
             // Create new option
-            $autoload = in_array($name, explode(',', WarpdriveLLAOptionsAutoLoad));
+            $autoload = in_array($name, explode(',', WARPDRIVE_LLA_OPT_AUTOLOAD));
             if ($this->isMultisite())
                 add_site_option($listName, $list, '', $autoload);
             else
@@ -864,7 +864,7 @@ class WarpdriveLimitLoginAttempts {
         // Create a new error
         // This error should be the same as in "shake it" filter below
         $error = new WP_Error();
-        $error->add(WarpdriveLLAErrorIdentifier, $this->errorMessageAdd());
+        $error->add(WARPDRIVE_LLA_ERROR_IDENTIFIER, $this->errorMessageAdd());
         return $error;
     }
 
@@ -874,7 +874,7 @@ class WarpdriveLimitLoginAttempts {
      * @return array
      */
     public function shakeFailure($error_codes) {
-        $error_codes[] = WarpdriveLLAErrorIdentifier;
+        $error_codes[] = WARPDRIVE_LLA_ERROR_IDENTIFIER;
         return $error_codes;
     }
 
