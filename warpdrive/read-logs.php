@@ -98,7 +98,7 @@ class WarpdriveReadLogs {
             if ($total_lines) {
                 echo '<ol>';
                 foreach ($file_lines as $line) {
-                    echo "<li>$line</li>";
+                    echo "<li>".sanitize_text_field($line)."</li>";
                 }
                 echo '</ol>';
             } else {
