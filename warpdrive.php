@@ -17,6 +17,40 @@ define('WARPDRIVE_EVVII_LOCATION',    'https://evvii.savviihq.com');
 define('WARPDRIVE_FORM_TOKEN',        'warpdrive_evvii_token_field');
 define('WARPDRIVE_FORM_CDN_ENABLED',  'warpdrive_cdn_field');
 
+/**
+ * Sanitizer helper functions
+ */
+
+/**
+ * Render HTML-safe string
+ * @param string $text String to sanitize
+ * @return string Type an escaped string
+ */
+function h($text) {
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * Format a number according to localization options
+ * @param int $n Number to format
+ * @param int $decimals Decimals of the number
+ * @return string Formatted number
+ */
+function n($n, $decimals) {
+    return number_format($n, $decimals);
+}
+
+/**
+ * Sanitize and echo $text
+ * @param string $text Text to be sanitized and echo'd
+ */
+function p($text) {
+    echo h($text);
+}
+
+/**
+ * Warpdrive class
+ */
 class Warpdrive {
 
     /**
