@@ -7,51 +7,49 @@
  * @author Ferdi van der Werf <ferdi@savvii.nl>
  */
 
-define('WarpdriveLLAOptions', 'warpdrive-limit-login-attempts');
-define('WarpdriveLLAOptionsAutoLoad', 'lockouts');
-define('WarpdriveLLANotifyMethods', 'log,email');
-define('WarpdriveLLADirectAddr', 'REMOTE_ADDR');
-define('WarpdriveLLAProxyAddr', 'HTTP_X_FORWARDED_FOR');
-define('WarpdriveLLAErrorIdentifier', 'too_many_attempts');
-
-// Load options at runtime
-$GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'] = array(
-    // Plugin stored version (for safe upgrades)
-    'version' => 1
-    // Lock out after x amount of attempts
-    , 'allowed_attempts' => 5
-    // Lock out for x seconds
-    , 'lockout_duration' => 1200 // 20 minutes
-    // Long lock out after x lock outs
-    , 'allowed_lockouts' => 3
-    // Long lock out duration
-    , 'lockout_long_duration' => 86400 // 24 hours
-    // Reset failed attempts after x seconds
-    , 'valid_duration' => 43200 // 12 hours
-    // Notify on lockout, valid values: '', 'log', 'email', 'log,email'
-    , 'lockout_notify' => 'log'
-    // If notify by email, send email after x lock outs
-    , 'email_after' => 3
-    // Enforce limit on new user registration for IP
-    , 'limit_register' => true
-    // Allow x new user registrations for IP
-    , 'register_amount' => 3
-    // Above, during x seconds
-    , 'register_duration' => 86400 // 24 hours
-    // Notify on register lockout, valid values: '', 'log', 'email', 'log,email'
-    , 'register_notify' => 'log'
-    // Disable password reset using login name
-    , 'reset_pwd_by_username_disable' => true
-    // Above for capability level_x or higher
-    , 'reset_pwd_by_username_level' => 1
-    // Disable all password resets?
-    , 'reset_pwd_disable' => false
-    // Above for capability level_x or higher
-    , 'reset_pwd_level' => 1
-);
-
+define('WARPDRIVE_LLA_OPTIONS', 'warpdrive-limit-login-attempts');
+define('WARPDRIVE_LLA_OPT_AUTOLOAD', 'lockouts');
+define('WARPDRIVE_LLA_NOTIFY_METHODS', 'log,email');
+define('WARPDRIVE_LLA_DIRECT_ADDR', 'REMOTE_ADDR');
+define('WARPDRIVE_LLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR');
+define('WARPDRIVE_LLA_ERROR_IDENTIFIER', 'too_many_attempts');
 
 class WarpdriveLimitLoginAttempts {
+
+    private $default_options = array(
+        // Plugin stored version (for safe upgrades)
+        'version' => 1
+        // Lock out after x amount of attempts
+    , 'allowed_attempts' => 5
+        // Lock out for x seconds
+    , 'lockout_duration' => 1200 // 20 minutes
+        // Long lock out after x lock outs
+    , 'allowed_lockouts' => 3
+        // Long lock out duration
+    , 'lockout_long_duration' => 86400 // 24 hours
+        // Reset failed attempts after x seconds
+    , 'valid_duration' => 43200 // 12 hours
+        // Notify on lockout, valid values: '', 'log', 'email', 'log,email'
+    , 'lockout_notify' => 'log'
+        // If notify by email, send email after x lock outs
+    , 'email_after' => 3
+        // Enforce limit on new user registration for IP
+    , 'limit_register' => true
+        // Allow x new user registrations for IP
+    , 'register_amount' => 3
+        // Above, during x seconds
+    , 'register_duration' => 86400 // 24 hours
+        // Notify on register lockout, valid values: '', 'log', 'email', 'log,email'
+    , 'register_notify' => 'log'
+        // Disable password reset using login name
+    , 'reset_pwd_by_username_disable' => true
+        // Above for capability level_x or higher
+    , 'reset_pwd_by_username_level' => 1
+        // Disable all password resets?
+    , 'reset_pwd_disable' => false
+        // Above for capability level_x or higher
+    , 'reset_pwd_level' => 1
+    );
 
     /**
      * Have we shown our error?
@@ -68,11 +66,6 @@ class WarpdriveLimitLoginAttempts {
      * @var bool
      */
     private $feNonEmptyCredentials = false;
-    /**
-     * Statistics, stored in option table
-     * @var object
-     */
-    private $feStatistics = null;
     /**
      * Options of limit login attempts module
      * @var null
@@ -144,8 +137,6 @@ class WarpdriveLimitLoginAttempts {
         if (is_admin()) {
             // Add submenu
             add_action('admin_menu', array($this, 'initAdminMenu'));
-            //$GLOBALS['warpdriveLLAOptionsPage'] = admin_url('')
-            // TODO: add admin hooks
         }
     }
 
@@ -159,13 +150,11 @@ class WarpdriveLimitLoginAttempts {
      */
     public function initOptions() {
         // Load from database
-        $this->options = $this->isMultisite() ?
-            get_site_option(WarpdriveLLAOptions) : get_option(WarpdriveLLAOptions);
+        $this->options = Warpdrive::get_option(WARPDRIVE_LLA_OPTIONS);
 
         // If there are no options, use default options
-        $defaults = &$GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'];
         if (!is_array($this->options)) {
-            $this->options = $defaults;
+            $this->options = $this->default_options;
         }
     }
 
@@ -174,16 +163,10 @@ class WarpdriveLimitLoginAttempts {
      */
     private function saveOptions() {
         // Try to save options to database
-        if ($this->isMultisite()) {
-            if (get_site_option(WarpdriveLLAOptions) === false)
-                add_site_option(WarpdriveLLAOptions, $this->options, '', true);
-            else
-                update_site_option(WarpdriveLLAOptions, $this->options);
+        if (false === Warpdrive::get_option(WARPDRIVE_LLA_OPTIONS)) {
+            Warpdrive::add_option(WARPDRIVE_LLA_OPTIONS, $this->options);
         } else {
-            if (get_option(WarpdriveLLAOptions) === false)
-                add_option(WarpdriveLLAOptions, $this->options, '', true);
-            else
-                update_option(WarpdriveLLAOptions, $this->options);
+            Warpdrive::update_option(WARPDRIVE_LLA_OPTIONS, $this->options);
         }
     }
 
@@ -193,7 +176,7 @@ class WarpdriveLimitLoginAttempts {
      * @return mixed
      */
     public function sanitizeOptions($options) {
-        $defaults = &$GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'];
+        $defaults = &$this->default_options;
 
         // Sanitize options
         foreach ($this->options as $name=>$value) {
@@ -214,31 +197,60 @@ class WarpdriveLimitLoginAttempts {
 
         // Specific sanitation follows
 
-        // Email after
-        $emailAfter = max(1, intval($this->options['email_after']));
-        $this->options['email_after'] = min($this->options['allowed_lockouts'], $emailAfter);
+        // Allowed attempts
+        if ($this->options['allowed_attempts'] <= 0) {
+            $this->options['allowed_attempts'] = 1; // Smallest is 1 attempt
+        }
+
+        // Lockout duration
+        if ($this->options['lockout_duration'] <= 60) {
+            $this->options['lockout_duration'] = 60; // Smallest is 60 seconds, aka 1 minute
+        }
+
+        // Allowed lockouts
+        if ($this->options['allowed_lockouts'] <= 0) {
+            $this->options['allowed_lockouts'] = 1; // Smallest is 1 lockout before extended lockout
+        }
+
+        // Extended lockout duration
+        if ($this->options['lockout_long_duration'] <= 3600) {
+            $this->options['lockout_long_duration'] = 3600; // Smallest is 3600 seconds, aka 1 hour
+        }
+
+        // Attempt remember duration
+        if ($this->options['valid_duration'] <= 3600) {
+            $this->options['valid_duration'] = 3600; // Smallest is 3600 seconds, aka 1 hour
+        }
+
+        // Registration attempts
+        if ($this->options['register_amount'] <= 0) {
+            $this->options['register_amount'] = 1; // Smallest is 1 registration
+        }
+
+        // Registration lockout duration
+        if ($this->options['register_duration'] <= 3600) {
+            $this->options['register_duration'] = 3600; // Smallest is 3600 seconds, aka 1 hour
+        }
 
         // Lockout notify
-        $allowed = explode(',', WarpdriveLLANotifyMethods);
+        $allowed = explode(',', WARPDRIVE_LLA_NOTIFY_METHODS);
         $args = explode(',', $this->options['lockout_notify']);
         $newArgs = array();
         foreach ($args as $arg) {
             if (in_array($arg, $allowed))
                 $newArgs[] = $arg;
         }
-        $this->options['lockout_notify'] = $newArgs;
+        $this->options['lockout_notify'] = join(",", $newArgs);
 
         // Register notify
-        $allowed = explode(',', WarpdriveLLANotifyMethods);
+        $allowed = explode(',', WARPDRIVE_LLA_NOTIFY_METHODS);
         $args = explode(',', $this->options['register_notify']);
         $newArgs = array();
         foreach ($args as $arg) {
             if (in_array($arg, $allowed))
                 $newArgs[] = $arg;
         }
-        $this->options['register_notify'] = $newArgs;
-
-        return $options;
+        $this->options['register_notify'] = join(",", $newArgs);
     }
 
     /**
@@ -248,7 +260,7 @@ class WarpdriveLimitLoginAttempts {
      * @return mixed Casted value
      */
     public function castOption($name, $value) {
-        $defaults = &$GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'];
+        $defaults = $this->default_options;
         // Is this a valid option?
         if (!isset($defaults[$name]))
             return null;
@@ -284,13 +296,6 @@ class WarpdriveLimitLoginAttempts {
      **************************************************/
 
     /**
-     * @return bool True if site is running as multisite
-     */
-    public function isMultisite() {
-        return function_exists('get_site_option') && function_exists('is_multisite') && is_multisite();
-    }
-
-    /**
      * Get correct client IP address
      * @param string $typeName
      * @return string
@@ -298,17 +303,17 @@ class WarpdriveLimitLoginAttempts {
     private function getIpAddress($typeName='') {
         $type = $typeName;
         if (empty($type))
-            $type = WarpdriveLLADirectAddr;
+            $type = WARPDRIVE_LLA_DIRECT_ADDR;
 
         // Get server value
         if (!empty($typeName) && isset($_SERVER[$type]))
             return $_SERVER[$type];
 
         // Not found, try direct address and then proxy address
-        if (isset($_SERVER[WarpdriveLLADirectAddr])) {
-            return $_SERVER[WarpdriveLLADirectAddr];
-        } else if (isset($_SERVER[WarpdriveLLAProxyAddr])) {
-            return $_SERVER[WarpdriveLLAProxyAddr];
+        if (isset($_SERVER[WARPDRIVE_LLA_DIRECT_ADDR])) {
+            return $_SERVER[WARPDRIVE_LLA_DIRECT_ADDR];
+        } else if (isset($_SERVER[WARPDRIVE_LLA_PROXY_ADDR])) {
+            return $_SERVER[WARPDRIVE_LLA_PROXY_ADDR];
         }
 
         // Failsafe
@@ -345,7 +350,7 @@ class WarpdriveLimitLoginAttempts {
         // Get real option name
         $name = $this->getName($name);
         // Get option from database
-        $list = $this->isMultisite() ? get_site_option($name) : get_option($name);
+        $list = Warpdrive::get_option($name);
         // Is it a valid array?
         if (is_array($list))
             return $list;
@@ -360,22 +365,15 @@ class WarpdriveLimitLoginAttempts {
      */
     private function saveList($name, $list) {
         // Get real name
-        $listName = $this->getName($name);
+        $name = $this->getName($name);
 
         // Does this options already exist?
-        $exists = $this->isMultisite() ? get_site_option($listName) : get_option($listName);
+        $exists = Warpdrive::get_option($name);
         if ($exists === false) {
             // Create new option
-            $autoload = in_array($name, explode(',', WarpdriveLLAOptionsAutoLoad));
-            if ($this->isMultisite())
-                add_site_option($listName, $list, '', $autoload);
-            else
-                add_option($listName, $list, '', $autoload);
+            Warpdrive::add_option($name, $list);
         } else {
-            if ($this->isMultisite())
-                update_site_option($listName, $list);
-            else
-                update_option($listName, $list);
+            Warpdrive::update_option($name, $list);
         }
     }
 
@@ -537,6 +535,8 @@ class WarpdriveLimitLoginAttempts {
         $log = $this->getList($logName);
         // Get IP address
         $ip = $this->getIpAddress();
+        // Sanitize username
+        $username = h($username);
 
         if (isset($log[$ip])) {
             $entry = &$log[$ip];
@@ -864,7 +864,7 @@ class WarpdriveLimitLoginAttempts {
         // Create a new error
         // This error should be the same as in "shake it" filter below
         $error = new WP_Error();
-        $error->add(WarpdriveLLAErrorIdentifier, $this->errorMessageAdd());
+        $error->add(WARPDRIVE_LLA_ERROR_IDENTIFIER, $this->errorMessageAdd());
         return $error;
     }
 
@@ -874,7 +874,7 @@ class WarpdriveLimitLoginAttempts {
      * @return array
      */
     public function shakeFailure($error_codes) {
-        $error_codes[] = WarpdriveLLAErrorIdentifier;
+        $error_codes[] = WARPDRIVE_LLA_ERROR_IDENTIFIER;
         return $error_codes;
     }
 
@@ -962,6 +962,7 @@ class WarpdriveLimitLoginAttempts {
     public function cookieValid($cookieElement, $user) {
         if (get_user_meta($user->ID, 'warpdriveLLA_prevCookie'))
             delete_user_meta($user->ID, 'warpdriveLLA_prevCookie');
+        // TODO: Clear attempts for this IP address
     }
 
     /**
@@ -1206,25 +1207,25 @@ class WarpdriveLimitLoginAttempts {
      * @param null $selected
      */
     private function formSelect($name, $options, $selected=null) {
-        // Start
-        echo '<select name="'.$name.'">';
-        // Print each option
+        // Print header
+        printf('<select name="%s">', h($name));
+        // Iterate over fields
         foreach ($options as $key=>$value) {
             if ($key == $selected)
-                echo '<option selected="selected" value="'.$key.'">'.$value.'</option>';
+                printf('<option selected="selected" value="%s">%s</option>', h($key), h($value));
             else
-                echo '<option value="'.$key.'">'.$value.'</option>';
+                printf('<option value="%s">%s</option>', h($key), h($value));
         }
         // End
-        echo '</select>';
+        p_raw('</select>');
     }
 
     /**
      * Show a div with an admin message
-     * @param $msg Message to show
+     * @param string $msg Message to show
      */
     public function adminMessage($msg) {
-        echo '<div id="message" class="updated fade"><p>'.$msg.'</p></div>';
+        ?><div id="message" class="updated fade"><p><?php p($msg) ?></p></div><?php
     }
 
     public function pageOptions() {
@@ -1255,33 +1256,33 @@ class WarpdriveLimitLoginAttempts {
 
             // Check if we want to reset settings to default
             if (isset($_POST['reset_to_defaults'])) {
-                $this->options = $GLOBALS['WarpdriveLimitLoginAttemptsOptionsDefault'];
+                $this->options = $this->default_options;
                 $this->saveOptions();
                 $this->adminMessage(__('Options reset to defaults', 'warpdrive'));
             } else {
                 // Set options with new values
-                $this->options['allowed_attempts'] = $_POST['optAllowedAttempts']+0;
-                $this->options['lockout_duration'] = ($_POST['optLockoutDuration']+0) * 60;
-                $this->options['allowed_lockouts'] = $_POST['optAllowedLockouts']+0;
-                $this->options['lockout_long_duration'] = ($_POST['optLockoutLongDuration']+0) * 3600;
-                $this->options['valid_duration'] = ($_POST['optValidDuration']+0) * 3600;
+                $this->options['allowed_attempts'] = intval($_POST['optAllowedAttempts']);
+                $this->options['lockout_duration'] = intval($_POST['optLockoutDuration']) * 60;
+                $this->options['allowed_lockouts'] = intval($_POST['optAllowedLockouts']);
+                $this->options['lockout_long_duration'] = intval($_POST['optLockoutLongDuration']) * 3600;
+                $this->options['valid_duration'] = intval($_POST['optValidDuration']) * 3600;
                 $lockoutNotify = array();
-                if ($_POST['optNotifyLockoutLog']+0)
+                if (intval($_POST['optNotifyLockoutLog']))
                     $lockoutNotify[] = 'log';
                 $this->options['lockout_notify'] = join(',', $lockoutNotify);
-                $this->options['limit_register'] = $_POST['optLimitRegister']+0 == 1;
-                $this->options['register_amount'] = $_POST['optRegisterAmount']+0;
-                $this->options['register_duration'] = ($_POST['optRegisterDuration']+0) * 3600;
+                $this->options['limit_register'] = intval($_POST['optLimitRegister']) == 1;
+                $this->options['register_amount'] = intval($_POST['optRegisterAmount']);
+                $this->options['register_duration'] = intval($_POST['optRegisterDuration']) * 3600;
                 $lockoutNotify = array();
-                if ($_POST['optNotifyLockoutRegisterLog']+0)
+                if (intval($_POST['optNotifyLockoutRegisterLog']))
                     $lockoutNotify[] = 'log';
                 $this->options['register_notify'] = join(',', $lockoutNotify);
-                $this->options['reset_pwd_by_username_disable'] = ($_POST['optDisablePwdResetByUsername']+0) == 1;
-                $this->options['reset_pwd_by_username_level'] = $_POST['optDisablePwdResetByUsernameFrom']+0;
-                $this->options['reset_pwd_disable'] = ($_POST['optDisablePwdReset']+0) == 1;
-                $this->options['reset_pwd_level'] = $_POST['optDisablePwdResetFrom']+0;
+                $this->options['reset_pwd_by_username_disable'] = intval($_POST['optDisablePwdResetByUsername']) == 1;
+                $this->options['reset_pwd_by_username_level'] = intval($_POST['optDisablePwdResetByUsernameFrom']);
+                $this->options['reset_pwd_disable'] = intval($_POST['optDisablePwdReset']) == 1;
+                $this->options['reset_pwd_level'] = intval($_POST['optDisablePwdResetFrom']);
 
-                $this->options = $this->sanitizeOptions($this->options);
+                $this->sanitizeOptions($this->options);
                 $this->saveOptions();
                 $this->adminMessage(__('Options changed', 'warpdrive'));
             }
@@ -1302,6 +1303,7 @@ class WarpdriveLimitLoginAttempts {
         $optDisablePwdResetByUsername = $this->getOption('reset_pwd_by_username_disable') ? ' checked' : '';
         $optDisablePwdReset = $this->getOption('reset_pwd_disable') ? ' checked' : '';
         // New registrations
+        $optLimitRegister = $this->getOption('limit_register') ? ' checked' : '';
         $notifyLockoutOptions = explode(',', $this->getOption('register_notify'));
         $optNotifyLockoutRegisterLog = in_array('log', $notifyLockoutOptions) ? ' checked' : '';
 
@@ -1317,51 +1319,51 @@ class WarpdriveLimitLoginAttempts {
                 </tr>
                 <tr>
                     <th align="left"><?php _e('Login lockouts', 'warpdrive'); ?></th>
-                    <td align="right"><?php echo $this->getStatistic('lockoutTotal'); ?></td>
-                    <td align="right"><?php echo count($this->getList('lockouts')); ?></td>
-                    <td><small><a href="<?php echo admin_url('admin.php?page=warpdrive_limitloginattempts&reset_lockouts=1'); ?>">Reset</a></small></td>
+                    <td align="right"><?php p($this->getStatistic('lockoutTotal')) ?></td>
+                    <td align="right"><?php p(count($this->getList('lockouts'))) ?></td>
+                    <td><small><a href="<?php p_raw(admin_url('admin.php?page=warpdrive_limitloginattempts&reset_lockouts=1')) ?>">Reset</a></small></td>
                 </tr>
                 <tr>
                     <th align="left"><?php _e('Registration lockouts', 'warpdrive'); ?></th>
-                    <td align="right"><?php echo $this->getStatistic('lockoutRegisterTotal'); ?></td>
-                    <td align="right"><?php echo count($this->getList('lockoutsRegister')); ?></td>
-                    <td><small><a href="<?php echo admin_url('admin.php?page=warpdrive_limitloginattempts&reset_lockouts_register=1'); ?>">Reset</a></small></td>
+                    <td align="right"><?php p($this->getStatistic('lockoutRegisterTotal')) ?></td>
+                    <td align="right"><?php p(count($this->getList('lockoutsRegister'))) ?></td>
+                    <td><small><a href="<?php p_raw(admin_url('admin.php?page=warpdrive_limitloginattempts&reset_lockouts_register=1')) ?>">Reset</a></small></td>
                 </tr>
             </table>
             <h3><?php _e('Limit Login Attempts Options', 'warpdrive'); ?></h3>
-            <form method="post" action="<?php echo admin_url('admin.php?page=warpdrive_limitloginattempts'); ?>">
+            <form method="post" action="<?php p_raw(admin_url('admin.php?page=warpdrive_limitloginattempts')) ?>">
                 <?php wp_nonce_field('warpdrive-limitloginattempts-options'); ?>
                 <table>
                     <tr><th align="left" style="font-size: 1.5em;"><?php _e('Lockout', 'warpdrive'); ?></th></tg></tr>
                     <tr>
                         <td><label for="optAllowedAttempts" title=""><?php _e('Allowed attempts for lockout', 'warpdrive'); ?></label></td>
-                        <td><input type="text" name="optAllowedAttempts" id="optAllowedAttempts" value="<?php echo $this->getOption('allowed_attempts'); ?>"></td>
+                        <td><input type="text" name="optAllowedAttempts" id="optAllowedAttempts" value="<?php p($this->getOption('allowed_attempts')) ?>"></td>
                     </tr>
 
                     <tr>
                         <td><label for="optLockoutDuration" title=""><?php _e('Lockout duration (minutes)', 'warpdrive'); ?></label></td>
-                        <td><input type="text" name="optLockoutDuration" id="optLockoutDuration" value="<?php echo $this->getOption('lockout_duration') / 60; ?>"></td>
+                        <td><input type="text" name="optLockoutDuration" id="optLockoutDuration" value="<?php p(intval($this->getOption('lockout_duration') / 60)) ?>"></td>
                     </tr>
 
                     <tr>
                         <td><label for="optAllowedLockouts" title=""><?php _e('Allowed lockouts for extended lockout', 'warpdrive'); ?></label></td>
-                        <td><input type="text" name="optAllowedLockouts" id="optAllowedLockouts" value="<?php echo $this->getOption('allowed_lockouts'); ?>"></td>
+                        <td><input type="text" name="optAllowedLockouts" id="optAllowedLockouts" value="<?php p($this->getOption('allowed_lockouts')) ?>"></td>
                     </tr>
 
                     <tr>
                         <td><label for="optLockoutLongDuration" title=""><?php _e('Extended lockouts duration (hours)', 'warpdrive'); ?></label></td>
-                        <td><input type="text" name="optLockoutLongDuration" id="optLockoutLongDuration" value="<?php echo $this->getOption('lockout_long_duration') / 3600; ?>"></td>
+                        <td><input type="text" name="optLockoutLongDuration" id="optLockoutLongDuration" value="<?php p(intval($this->getOption('lockout_long_duration') / 3600)) ?>"></td>
                     </tr>
 
                     <tr>
                         <td><label for="optValidDuration" title=""><?php _e('Time until attempts are reset (hours)', 'warpdrive'); ?></label></td>
-                        <td><input type="text" name="optValidDuration" id="optValidDuration" value="<?php echo $this->getOption('valid_duration') / 3600; ?>"></td>
+                        <td><input type="text" name="optValidDuration" id="optValidDuration" value="<?php p(intval($this->getOption('valid_duration') / 3600)) ?>"></td>
                     </tr>
                     <tr><th align="left" style="font-size: 1.5em; padding-top: 1em;"><?php _e('Notify on lockout', 'warpdrive'); ?></th></tr>
                     <tr>
                         <td colspan="2">
                             <label>
-                                <input type="checkbox" name="optNotifyLockoutLog"<?php echo $optNotifyLockoutLog; ?> value="1" />
+                                <input type="checkbox" name="optNotifyLockoutLog"<?php p($optNotifyLockoutLog); ?> value="1" />
                                 <?php _e('Register in lockout log', 'warpdrive'); ?>
                             </label><br />
                         </td>
@@ -1371,7 +1373,7 @@ class WarpdriveLimitLoginAttempts {
                     <tr>
                         <td colspan="2">
                             <label>
-                                <input type="checkbox" name="optDisablePwdResetByUsername"<?php echo $optDisablePwdResetByUsername; ?> value="1" />
+                                <input type="checkbox" name="optDisablePwdResetByUsername"<?php p($optDisablePwdResetByUsername); ?> value="1" />
                                 <?php _e('Disable password reset using username for users of level', 'warpdrive'); ?>
                             </label>
                             <label>
@@ -1383,7 +1385,7 @@ class WarpdriveLimitLoginAttempts {
                     <tr>
                         <td colspan="2">
                             <label>
-                                <input type="checkbox" name="optDisablePwdReset"<?php echo $optDisablePwdReset; ?> value="1" />
+                                <input type="checkbox" name="optDisablePwdReset"<?php p($optDisablePwdReset) ?> value="1" />
                                 <?php _e('Disable password reset for users of level', 'warpdrive'); ?>
                             </label>
                             <label>
@@ -1397,12 +1399,12 @@ class WarpdriveLimitLoginAttempts {
                     <tr>
                         <td colspan="2">
                             <label>
-                                <input type="checkbox" name="optLimitRegister"<?php echo $optLimitRegister; ?> value="1" />
+                                <input type="checkbox" name="optLimitRegister"<?php p($optLimitRegister) ?> value="1" />
                                 <?php _e('Limit new user registrations to', 'warpdrive'); ?>
                             </label>
-                            <input type="text" name="optRegisterAmount" size="3" maxlength="4" value="<?php echo $this->getOption('register_amount'); ?>" />
+                            <label><input type="text" name="optRegisterAmount" size="3" maxlength="4" value="<?php p($this->getOption('register_amount')) ?>" /></label>
                             <?php _e('registrations every', 'warpdrive'); ?>
-                            <input type="text" name="optRegisterDuration" size="3" maxlength="4" value="<?php echo $this->getOption('register_duration') / 3600; ?>" />
+                            <label><input type="text" name="optRegisterDuration" size="3" maxlength="4" value="<?php p(intval($this->getOption('register_duration') / 3600)) ?>" /></label>
                             <?php _e('hours per IP address', 'warpdrive'); ?>
                         </td>
                     </tr>
@@ -1410,7 +1412,7 @@ class WarpdriveLimitLoginAttempts {
                     <tr>
                         <td colspan="2">
                             <label>
-                                <input type="checkbox" name="optNotifyLockoutRegisterLog"<?php echo $optNotifyLockoutRegisterLog; ?> value="1" />
+                                <input type="checkbox" name="optNotifyLockoutRegisterLog"<?php p($optNotifyLockoutRegisterLog) ?> value="1" />
                                 <?php _e('Register in registration log', 'warpdrive'); ?>
                             </label><br />
                         </td>
@@ -1441,15 +1443,15 @@ class WarpdriveLimitLoginAttempts {
                         </tr>
 <?php   foreach ($this->getList('lockoutLog') as $ip=>$entry) { ?>
                         <tr>
-                            <td><?php echo $ip ?></td>
-                            <td align="right"><?php echo $entry[1]; ?>x</td>
-                            <td align="right"><?php echo date("d-m-Y H:i", $entry[0]); ?></td>
+                            <td><?php p($ip) ?></td>
+                            <td align="right"><?php p($entry[1]); ?>x</td>
+                            <td align="right"><?php p(date("d-m-Y H:i", $entry[0])) ?></td>
                         </tr>
 <?php       foreach ($entry[2] as $user=>$value) { ?>
                         <tr>
                             <td align="right">-></td>
-                            <td align="right"><?php echo $value; ?>x</td>
-                            <td><?php echo $user; ?></td>
+                            <td align="right"><?php p($value) ?>x</td>
+                            <td><?php p($user) ?></td>
                         </tr>
 <?php       } ?>
 <?php   } ?>
@@ -1464,8 +1466,8 @@ class WarpdriveLimitLoginAttempts {
                         </tr>
 <?php   foreach ($this->getList('lockoutLog-username') as $uname=>$entry) { ?>
                         <tr>
-                            <td><?php echo $uname ?></td>
-                            <td align="right"><?php echo $entry[1]; ?>x</td>
+                            <td><?php p($uname) ?></td>
+                            <td align="right"><?php p($entry[1]); ?>x</td>
                         </tr>
 <?php   } ?>
                     </table>
@@ -1479,12 +1481,6 @@ class WarpdriveLimitLoginAttempts {
         </table>
         </div><?php
     }
-}
-
-function debug($var) {
-    echo '<pre>';
-    var_dump($var);
-    echo '</pre>';
 }
 
 add_action('init', array('WarpdriveLimitLoginAttempts', 'init'));

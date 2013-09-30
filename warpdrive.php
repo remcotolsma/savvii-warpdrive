@@ -3,7 +3,7 @@
  * Plugin name: Warpdrive
  * Plugin URI: https://github.com/Savvii/warpdrive
  * Description: Hosting plugin for Savvii
- * Version: 0.15
+ * Version: 0.16
  * Author: Ferdi van der Werf <ferdi@savvii.nl>
  * Author URI:
  * License: All rights remain with Savvii
@@ -17,6 +17,54 @@ define('WARPDRIVE_EVVII_LOCATION',    'https://evvii.savviihq.com');
 define('WARPDRIVE_FORM_TOKEN',        'warpdrive_evvii_token_field');
 define('WARPDRIVE_FORM_CDN_ENABLED',  'warpdrive_cdn_field');
 
+/**
+ * Sanitizer helper functions
+ */
+
+/**
+ * Render HTML-safe string
+ * @param string $text String to sanitize
+ * @return string Type an escaped string
+ */
+function h($text) {
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * Format a number according to localization options
+ * @param int $n Number to format
+ * @param int $decimals Decimals of the number
+ * @return string Formatted number
+ */
+function n($n, $decimals) {
+    return number_format($n, $decimals);
+}
+
+/**
+ * Sanitize and echo $text
+ * @param string $text Text to be sanitized and echo'd
+ */
+function p($text) {
+    echo h($text);
+}
+
+/**
+ * Echo raw $text
+ * @param string $text Text to echo
+ */
+function p_raw($text) {
+    echo $text;
+}
+
+function debug($var) {
+    p_raw('<pre>');
+    var_dump($var);
+    p_raw('</pre>');
+}
+
+/**
+ * Warpdrive class
+ */
 class Warpdrive {
 
     /**
@@ -239,6 +287,14 @@ class Warpdrive {
         }
     }
 
+    public function admin_head_info($text) {
+        ?>
+        <div class="updated fade">
+            <p><?php p($text); ?></p>
+        </div>
+        <?php
+    }
+
     public function dashboard_page() {
         // Access token for Evvii
         if (isset($_POST[WARPDRIVE_FORM_TOKEN])) {
@@ -248,7 +304,7 @@ class Warpdrive {
             $site = $this->get_site_from_evvii($token);
             if (is_array($site)) {
                 // Save token and site name
-                echo '<h2>'._('Access token saved!').'</h2>';
+                $this->admin_head_info(_('Access token saved!'));
                 $this->add_option(WARPDRIVE_OPT_ACCESS_TOKEN, $token);
                 $this->add_option(WARPDRIVE_OPT_SITE_NAME, $site['system_name']);
                 $this->add_option(WARPDRIVE_OPT_CDN_ENABLED, 1);
@@ -260,7 +316,7 @@ class Warpdrive {
                 $flush->execute_flush(true);
             } else {
                 // Token failed, show error
-                echo '<h2>'._('Incorrect access token provided!').'</h2>';
+                $this->admin_head_info(_('Incorrect access token provided!'));
                 // Remove old token and site name from database
                 $this->delete_option(WARPDRIVE_OPT_ACCESS_TOKEN);
                 $this->delete_option(WARPDRIVE_OPT_SITE_NAME);
@@ -274,7 +330,7 @@ class Warpdrive {
             $cdn_enabled = intval($_POST[WARPDRIVE_FORM_CDN_ENABLED]);
             // Save to database
             Warpdrive::update_option(WARPDRIVE_OPT_CDN_ENABLED, $cdn_enabled);
-            echo '<h2>'._('CDN choice saved!').'</h2>';
+            $this->admin_head_info(_('CDN choice saved!'));
             // Flush cache
             $flush = new Evvii_Cache();
             $flush->execute_flush(true);
@@ -291,8 +347,8 @@ class Warpdrive {
             <form action="" method="post">
                 <table>
                     <tr>
-                        <td><?php _e('Access token:', 'warpdrive'); ?></td>
-                        <td><input type="text" name="<?php echo WARPDRIVE_FORM_TOKEN; ?>" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>" /></td>
+                        <td><label for="<?php p(WARPDRIVE_FORM_TOKEN) ?>"><?php _e('Access token:', 'warpdrive'); ?></label></td>
+                        <td><input id="<?php p(WARPDRIVE_FORM_TOKEN) ?>" type="text" name="<?php p(WARPDRIVE_FORM_TOKEN); ?>" value="<?php p($token) ?>" /></td>
                     </tr>
                     <tr>
                         <td>&nbsp;</td>
@@ -302,20 +358,20 @@ class Warpdrive {
             </form>
 
             <h3><?php _e('Savvii CDN', 'warpdrive') ?></h3>
-            <div><?php _e('Here you can enable or disable the usage of Savvii\'s CDN', 'warpdrive'); ?></div>
 <?php
             if ($token == '') {
-                echo '<div>'._('CDN option cannot be changed until a valid access token is set.').'</div>';
+                _e('CDN option cannot be changed until a valid access token is set.');
             } else {
                 // Token is set
+                _e('Here you can enable or disable the usage of Savvii\'s CDN', 'warpdrive');
 ?>
             <form action="" method="post">
                 <label>
-                    <input type="radio" name="<?php echo WARPDRIVE_FORM_CDN_ENABLED; ?>" value="1" <?php if ($cdn_enabled) echo ' checked'; ?>/>
+                    <input type="radio" name="<?php p(WARPDRIVE_FORM_CDN_ENABLED) ?>" value="1" <?php if ($cdn_enabled) p(' checked'); ?>/>
                     <?php _e('Enabled', 'warpdrive'); ?>
                 </label><br />
                 <label>
-                    <input type="radio" name="<?php echo WARPDRIVE_FORM_CDN_ENABLED; ?>" value="0" <?php if (!$cdn_enabled) echo ' checked'; ?>/>
+                    <input type="radio" name="<?php p(WARPDRIVE_FORM_CDN_ENABLED) ?>" value="0" <?php if (!$cdn_enabled) p(' checked'); ?>/>
                     <?php _e('Disabled', 'warpdrive'); ?>
                 </label><br />
                 <input type="submit" value="<?php _e('Save CDN choice') ?>">
