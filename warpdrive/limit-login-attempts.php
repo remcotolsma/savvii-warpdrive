@@ -137,8 +137,6 @@ class WarpdriveLimitLoginAttempts {
         if (is_admin()) {
             // Add submenu
             add_action('admin_menu', array($this, 'initAdminMenu'));
-            //$GLOBALS['warpdriveLLAOptionsPage'] = admin_url('')
-            // TODO: add admin hooks
         }
     }
 
@@ -152,8 +150,7 @@ class WarpdriveLimitLoginAttempts {
      */
     public function initOptions() {
         // Load from database
-        $this->options = $this->isMultisite() ?
-            get_site_option(WARPDRIVE_LLA_OPTIONS) : get_option(WARPDRIVE_LLA_OPTIONS);
+        $this->options = Warpdrive::get_option(WARPDRIVE_LLA_OPTIONS);
 
         // If there are no options, use default options
         if (!is_array($this->options)) {
@@ -166,16 +163,10 @@ class WarpdriveLimitLoginAttempts {
      */
     private function saveOptions() {
         // Try to save options to database
-        if ($this->isMultisite()) {
-            if (get_site_option(WARPDRIVE_LLA_OPTIONS) === false)
-                add_site_option(WARPDRIVE_LLA_OPTIONS, $this->options, '', true);
-            else
-                update_site_option(WARPDRIVE_LLA_OPTIONS, $this->options);
+        if (false === Warpdrive::get_option(WARPDRIVE_LLA_OPTIONS)) {
+            Warpdrive::add_option(WARPDRIVE_LLA_OPTIONS, $this->options);
         } else {
-            if (get_option(WARPDRIVE_LLA_OPTIONS) === false)
-                add_option(WARPDRIVE_LLA_OPTIONS, $this->options, '', true);
-            else
-                update_option(WARPDRIVE_LLA_OPTIONS, $this->options);
+            Warpdrive::update_option(WARPDRIVE_LLA_OPTIONS, $this->options);
         }
     }
 
@@ -185,7 +176,7 @@ class WarpdriveLimitLoginAttempts {
      * @return mixed
      */
     public function sanitizeOptions($options) {
-        $defaults = $this->default_options;
+        $defaults = &$this->default_options;
 
         // Sanitize options
         foreach ($this->options as $name=>$value) {
@@ -205,10 +196,6 @@ class WarpdriveLimitLoginAttempts {
         }
 
         // Specific sanitation follows
-
-        // Email after
-        $emailAfter = max(1, intval($this->options['email_after']));
-        $this->options['email_after'] = min($this->options['allowed_lockouts'], $emailAfter);
 
         // Lockout notify
         $allowed = explode(',', WARPDRIVE_LLA_NOTIFY_METHODS);
@@ -276,13 +263,6 @@ class WarpdriveLimitLoginAttempts {
      **************************************************/
 
     /**
-     * @return bool True if site is running as multisite
-     */
-    public function isMultisite() {
-        return function_exists('get_site_option') && function_exists('is_multisite') && is_multisite();
-    }
-
-    /**
      * Get correct client IP address
      * @param string $typeName
      * @return string
@@ -337,7 +317,7 @@ class WarpdriveLimitLoginAttempts {
         // Get real option name
         $name = $this->getName($name);
         // Get option from database
-        $list = $this->isMultisite() ? get_site_option($name) : get_option($name);
+        $list = Warpdrive::get_option($name);
         // Is it a valid array?
         if (is_array($list))
             return $list;
@@ -352,22 +332,15 @@ class WarpdriveLimitLoginAttempts {
      */
     private function saveList($name, $list) {
         // Get real name
-        $listName = $this->getName($name);
+        $name = $this->getName($name);
 
         // Does this options already exist?
-        $exists = $this->isMultisite() ? get_site_option($listName) : get_option($listName);
+        $exists = Warpdrive::get_option($name);
         if ($exists === false) {
             // Create new option
-            $autoload = in_array($name, explode(',', WARPDRIVE_LLA_OPT_AUTOLOAD));
-            if ($this->isMultisite())
-                add_site_option($listName, $list, '', $autoload);
-            else
-                add_option($listName, $list, '', $autoload);
+            Warpdrive::add_option($name, $list);
         } else {
-            if ($this->isMultisite())
-                update_site_option($listName, $list);
-            else
-                update_option($listName, $list);
+            Warpdrive::update_option($name, $list);
         }
     }
 
