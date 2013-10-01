@@ -12,7 +12,7 @@ define('WARPDRIVE_LLA_OPT_AUTOLOAD', 'lockouts');
 define('WARPDRIVE_LLA_NOTIFY_METHODS', 'log,email');
 define('WARPDRIVE_LLA_DIRECT_ADDR', 'REMOTE_ADDR');
 define('WARPDRIVE_LLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR');
-define('WARPDRIVE_LLA_ERROR_IDENTIFIER', 'too_many_attempts');
+define('WARPDRIVE_LLA_ERROR_TOO_MANY_ATTEMPTS', 'too_many_attempts');
 
 class WarpdriveLimitLoginAttempts {
 
@@ -100,10 +100,17 @@ class WarpdriveLimitLoginAttempts {
         $this->initStatistics();
 
         // Filters and actions
+        // Login success
+        add_action('wp_login', array($this, 'wp_login_success'));
+        // Login failed
         add_action('wp_login_failed', array($this, 'wpLoginFailed'));
+        // Header above login form
         add_action('login_head', array($this, 'errorMessageAdd'));
+        // Errors above login form
         add_action('login_errors', array($this, 'errorMessagesFix'));
+        // Check if we are allowed to try to login (fired before actual check is done)
         add_filter('wp_authenticate_user', array($this, 'wpAuthenticateUser'), 999, 2);
+        // Edit shake message
         add_filter('shake_error_codes', array($this, 'shakeFailure'));
 
         // Handle auth cookies?
@@ -172,10 +179,9 @@ class WarpdriveLimitLoginAttempts {
 
     /**
      * Sanitize a given set of options
-     * @param $options
      * @return mixed
      */
-    public function sanitizeOptions($options) {
+    public function sanitizeOptions() {
         $defaults = &$this->default_options;
 
         // Sanitize options
@@ -535,8 +541,6 @@ class WarpdriveLimitLoginAttempts {
         $log = $this->getList($logName);
         // Get IP address
         $ip = $this->getIpAddress();
-        // Sanitize username
-        $username = h($username);
 
         if (isset($log[$ip])) {
             $entry = &$log[$ip];
@@ -717,6 +721,26 @@ class WarpdriveLimitLoginAttempts {
      * Login
      **************************************************/
 
+    public function wp_login_success($login, $username) {
+
+        // Get IP
+        $ip = $this->getIpAddress();
+
+        // Get attempt and valid list
+        $attempts = $this->getList('attempts');
+        $valid = $this->getList('attemptsValid');
+
+        // Check if ip is in list
+        if (isset($attempts[$ip])) {
+            // Remove ip from attempts
+            unset($attempts[$ip]);
+            unset($valid[$ip]);
+
+            // Save list
+            $this->cleanup($attempts, null, $valid);
+        }
+    }
+
     /**
      * Action when login attempt failed
      * - Increase number of attempts
@@ -864,7 +888,7 @@ class WarpdriveLimitLoginAttempts {
         // Create a new error
         // This error should be the same as in "shake it" filter below
         $error = new WP_Error();
-        $error->add(WARPDRIVE_LLA_ERROR_IDENTIFIER, $this->errorMessageAdd());
+        $error->add(WARPDRIVE_LLA_ERROR_TOO_MANY_ATTEMPTS, $this->errorMessageAdd());
         return $error;
     }
 
@@ -874,7 +898,7 @@ class WarpdriveLimitLoginAttempts {
      * @return array
      */
     public function shakeFailure($error_codes) {
-        $error_codes[] = WARPDRIVE_LLA_ERROR_IDENTIFIER;
+        $error_codes[] = WARPDRIVE_LLA_ERROR_TOO_MANY_ATTEMPTS;
         return $error_codes;
     }
 
@@ -1282,7 +1306,7 @@ class WarpdriveLimitLoginAttempts {
                 $this->options['reset_pwd_disable'] = intval($_POST['optDisablePwdReset']) == 1;
                 $this->options['reset_pwd_level'] = intval($_POST['optDisablePwdResetFrom']);
 
-                $this->sanitizeOptions($this->options);
+                $this->sanitizeOptions();
                 $this->saveOptions();
                 $this->adminMessage(__('Options changed', 'warpdrive'));
             }
