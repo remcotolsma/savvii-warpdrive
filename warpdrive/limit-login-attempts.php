@@ -541,8 +541,6 @@ class WarpdriveLimitLoginAttempts {
         $log = $this->getList($logName);
         // Get IP address
         $ip = $this->getIpAddress();
-        // Sanitize username
-        $username = h($username);
 
         if (isset($log[$ip])) {
             $entry = &$log[$ip];
