@@ -100,10 +100,15 @@ class WarpdriveLimitLoginAttempts {
         $this->initStatistics();
 
         // Filters and actions
+        // Login failed
         add_action('wp_login_failed', array($this, 'wpLoginFailed'));
+        // Header above login form
         add_action('login_head', array($this, 'errorMessageAdd'));
+        // Errors above login form
         add_action('login_errors', array($this, 'errorMessagesFix'));
+        // Check if we are allowed to try to login (fired before actual check is done)
         add_filter('wp_authenticate_user', array($this, 'wpAuthenticateUser'), 999, 2);
+        // Edit shake message
         add_filter('shake_error_codes', array($this, 'shakeFailure'));
 
         // Handle auth cookies?
