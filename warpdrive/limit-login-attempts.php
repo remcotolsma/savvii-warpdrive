@@ -12,7 +12,7 @@ define('WARPDRIVE_LLA_OPT_AUTOLOAD', 'lockouts');
 define('WARPDRIVE_LLA_NOTIFY_METHODS', 'log,email');
 define('WARPDRIVE_LLA_DIRECT_ADDR', 'REMOTE_ADDR');
 define('WARPDRIVE_LLA_PROXY_ADDR', 'HTTP_X_FORWARDED_FOR');
-define('WARPDRIVE_LLA_ERROR_IDENTIFIER', 'too_many_attempts');
+define('WARPDRIVE_LLA_ERROR_TOO_MANY_ATTEMPTS', 'too_many_attempts');
 
 class WarpdriveLimitLoginAttempts {
 
@@ -863,7 +863,7 @@ class WarpdriveLimitLoginAttempts {
         // Create a new error
         // This error should be the same as in "shake it" filter below
         $error = new WP_Error();
-        $error->add(WARPDRIVE_LLA_ERROR_IDENTIFIER, $this->errorMessageAdd());
+        $error->add(WARPDRIVE_LLA_ERROR_TOO_MANY_ATTEMPTS, $this->errorMessageAdd());
         return $error;
     }
 
@@ -873,7 +873,7 @@ class WarpdriveLimitLoginAttempts {
      * @return array
      */
     public function shakeFailure($error_codes) {
-        $error_codes[] = WARPDRIVE_LLA_ERROR_IDENTIFIER;
+        $error_codes[] = WARPDRIVE_LLA_ERROR_TOO_MANY_ATTEMPTS;
         return $error_codes;
     }
 
