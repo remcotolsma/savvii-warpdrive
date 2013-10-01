@@ -100,6 +100,8 @@ class WarpdriveLimitLoginAttempts {
         $this->initStatistics();
 
         // Filters and actions
+        // Login success
+        add_action('wp_login', array($this, 'wp_login_success'));
         // Login failed
         add_action('wp_login_failed', array($this, 'wpLoginFailed'));
         // Header above login form
@@ -720,6 +722,26 @@ class WarpdriveLimitLoginAttempts {
     /**************************************************
      * Login
      **************************************************/
+
+    public function wp_login_success($login, $username) {
+
+        // Get IP
+        $ip = $this->getIpAddress();
+
+        // Get attempt and valid list
+        $attempts = $this->getList('attempts');
+        $valid = $this->getList('attemptsValid');
+
+        // Check if ip is in list
+        if (isset($attempts[$ip])) {
+            // Remove ip from attempts
+            unset($attempts[$ip]);
+            unset($valid[$ip]);
+
+            // Save list
+            $this->cleanup($attempts, null, $valid);
+        }
+    }
 
     /**
      * Action when login attempt failed
