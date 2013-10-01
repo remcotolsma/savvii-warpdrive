@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin name: Warpdrive
- * Plugin URI: https://github.com/Savvii/warpdrive
+ * Plugin URI: http://www.savvii.nl
  * Description: Hosting plugin for Savvii
- * Version: 0.16
+ * Version: 0.17
  * Author: Ferdi van der Werf <ferdi@savvii.nl>
  * Author URI:
  * License: All rights remain with Savvii
