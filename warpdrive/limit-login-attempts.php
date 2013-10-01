@@ -172,10 +172,9 @@ class WarpdriveLimitLoginAttempts {
 
     /**
      * Sanitize a given set of options
-     * @param $options
      * @return mixed
      */
-    public function sanitizeOptions($options) {
+    public function sanitizeOptions() {
         $defaults = &$this->default_options;
 
         // Sanitize options
@@ -1282,7 +1281,7 @@ class WarpdriveLimitLoginAttempts {
                 $this->options['reset_pwd_disable'] = intval($_POST['optDisablePwdReset']) == 1;
                 $this->options['reset_pwd_level'] = intval($_POST['optDisablePwdResetFrom']);
 
-                $this->sanitizeOptions($this->options);
+                $this->sanitizeOptions();
                 $this->saveOptions();
                 $this->adminMessage(__('Options changed', 'warpdrive'));
             }
