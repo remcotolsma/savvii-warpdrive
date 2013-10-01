@@ -27,30 +27,27 @@ class WarpdriveCdn {
     }
 
     public function process(&$buffer) {
-        $regexps = array();
-        $site_path = $this->get_site_path();
-        $domain_regexp = $this->get_url_regexp($this->get_domain_url());
-        $general_mask = "*.css;*.js;*.gif;*.png;*.jpg;*.xml;*.ico;*.ttf;*.otf,*.woff";
+        $wp_inc = WPINC;//effing stupid PHP
 
-        // TODO: Upload links
+        // Prepare link regexp
+        $scheme     = "https?://";
+        $domain     = $this->get_domain_regexp();
+        $paths = "{$this->get_site_path()}(wp-content|{$wp_inc})/";
+        $basename   = "[^\"']+";
+        $extensions = "\.(css|js|gif|png|jpg|xml|ico|ttf|otf|woff)";
 
-        // Everything from wp-content
-        $regexps[] = '~(["\'(])\s*(('.$domain_regexp.')?('.$this->preg_quote($site_path.'wp-content').'/('.$this->get_regexp_by_mask($general_mask).')))~';
+        $regexp = "~({$scheme})({$domain})({$paths}{$basename}{$extensions})~";
 
-        // Include files
-        $regexps[] = '~(["\'(])\s*(('.$domain_regexp.')?('.$this->preg_quote($site_path.WPINC).'/('.$this->get_regexp_by_mask($general_mask).')))~';
-
-        // Theme links
-        $theme_dir = preg_replace('~'.$domain_regexp.'~i', '', get_theme_root_uri());
-        $regexps[] = '~(["\'(])\s*(('.$domain_regexp.')?('.$this->preg_quote($theme_dir).'/('.$this->get_regexp_by_mask($general_mask).')))~';
-
-        // TODO: Minify processing
-
-        foreach ($regexps as $regexp) {
-            $buffer = preg_replace_callback($regexp, array($this, 'process_link'), $buffer);
+        // Prepare cdn replacement
+        $replace = "$1$2$3";
+        $site_name = Warpdrive::get_option(WARPDRIVE_OPT_SITE_NAME);
+        // Try to create a CDN link
+        if (!is_null($site_name)) {
+            // Fixed single CDN
+            $replace = '$1cdn.'.$site_name.'.savviihq.com$3';
         }
 
-        return $buffer;
+        return preg_replace($regexp, $replace, $buffer);
     }
 
     public function process_link($matches) {
@@ -181,28 +178,16 @@ class WarpdriveCdn {
      * Get domain url
      * @return string Domain url
      */
-    private function get_domain_url() {
-        $home_url = get_home_url(); // TODO: Might cause problems on multisite instances
-        $parse_url = @parse_url($home_url);
+    private function get_domain_regexp() {
+        $domain_re = "";
 
-        if (is_array($parse_url) && isset($parse_url['scheme']) && isset($parse_url['host'])) {
-            $port = isset($parse_url['port']) && $parse_url['port'] != 80 ? ':'.(int)$parse_url['port'] : '';
-            return sprintf('%s://%s%s', $parse_url['scheme'], $parse_url['host'], $port);
+        // TODO: Might cause problems on multisite instances
+        $parse_url = @parse_url(get_home_url());
+        if (is_array($parse_url) && isset($parse_url['host'])) {
+            $domain_re = $this->preg_quote($parse_url['host']);
         }
 
-        return false;
-    }
-
-    /**
-     * Get url regexp
-     * @param string $url
-     * @return string
-     */
-    private function get_url_regexp($url) {
-        $url = preg_replace('~(https?:)//~i', '', $url);
-        $url = preg_replace('~^www\.~i', '', $url);
-
-        return '(https?:)?//(www\.)?'.$this->preg_quote($url);
+        return $domain_re;
     }
 
     /**
@@ -210,6 +195,7 @@ class WarpdriveCdn {
      * @param string $string
      * @param string $delimiter
      * @return string
+     * TODO: seems obsolete, since spaces never occur in URLs, hence it merely duplciates PHP functionatlity.
      */
     private function preg_quote($string, $delimiter=null) {
         $string = preg_quote($string, $delimiter);
