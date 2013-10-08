@@ -50,66 +50,6 @@ class WarpdriveCdn {
         return preg_replace($regexp, $replace, $buffer);
     }
 
-    public function process_link($matches) {
-        list($match, $quote, $url, , , , $path) = $matches;
-        $path = ltrim($path, '/');
-        return $this->process_link_replace($match, $quote, $url, $path);
-    }
-
-    private $replaced_urls = array();
-
-    public function process_link_replace($match, $quote, $url, $path) {
-
-        // Check if url was already replaced
-        if (isset($this->replaced_urls[$url])) {
-            return $this->replaced_urls[$url];
-        }
-
-        // Get site name
-        static $site_name = null;
-        if (is_null($site_name)) {
-            $site_name = Warpdrive::get_option(WARPDRIVE_OPT_SITE_NAME);
-        }
-
-        // Try to create a CDN link    
-        if ($site_name) {
-            // Fixed single CDN
-            //$cdn_index = rand(1, 5);
-            $new_url = $quote.sprintf('%s://cdn.%s.savviihq.com/%s', $this->get_scheme(), $site_name, $path);
-
-            // Save url for repeated requests
-            $this->replaced_urls[$url] = $new_url;
-
-            return $new_url;
-        }
-
-        // No replacement, return original link
-        return $match;
-
-    }
-
-    private function local_uri_to_cdn_uri($local_uri) {
-        if (Warpdrive::is_network() && defined('DOMAIN_MAPPING') && DOMAIN_MAPPING) {
-            $local_uri = str_replace($this->get_site_url(), '', $local_uri);
-        }
-
-        return ltrim($local_uri, '/');
-    }
-
-    /**
-     * Get scheme of link
-     * @return string
-     */
-    private function get_scheme() {
-        // SSL cases
-        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'])
-            return 'https';
-        if (isset($_SERVER['SERVER_PORT']) && intval($_SERVER['SERVER_PORT']) == 443)
-            return 'https';
-        // Default case
-        return 'http';
-    }
-
     /**
      * Check if we can modify contents
      * @return bool True if we can
@@ -203,42 +143,6 @@ class WarpdriveCdn {
             ' ' => '\ '
         ));
         return $string;
-    }
-
-    /**
-     * Return a regexp by mask
-     * @param string $mask
-     * @return string
-     */
-    private function get_regexp_by_mask($mask) {
-        $mask = trim($mask);
-        $mask = $this->preg_quote($mask);
-
-        $mask = str_replace(
-            array(
-                '\*',
-                '\?',
-                ';'
-            ),
-            array(
-                '@ASTERISK@',
-                '@QUESTION@',
-                '|'
-            ),
-            $mask
-        );
-
-        return str_replace(
-            array(
-                '@ASTERISK@',
-                '@QUESTION@'
-            ),
-            array(
-                '[^\\?\\*:\\|\'"<>]*',
-                '[^\\?\\*:\\|\'"<>]'
-            ),
-            $mask
-        );
     }
 
 }
