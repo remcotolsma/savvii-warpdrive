@@ -7,8 +7,9 @@ set :repository,  "git@github.com:Savvii/warpdrive.git"
 # set :scm, :git # You can set :scm explicitly or Capistrano will make an intelligent guess based on known version control directory names
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 
-role :web, "nginx.savviihq.com"                          # Your HTTP server, Apache/etc
-role :app, "nginx.savviihq.com"                          # This may be the same as your `Web` server
+set :gateway, "provvii"
+role :web, "nginx" # Your HTTP server, Apache/etc
+role :app, "nginx" # This may be the same as your `Web` server
 
 set :deploy_to, "/opt/savvii/#{application}"
 
