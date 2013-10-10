@@ -11,6 +11,7 @@ class Evvii_Cache {
         'switch_theme', // Runs when the blog's theme is changed.
         'generate_rewrite_rules', // Runs after the rewrite rules are generated.
         'transition_comment_status', // Runs after comment changed state (approved, unapproved, trash, spam)
+        'edit_comment', // Runs after comment is edited
         // TODO: [6] Add Widget events when they are added to WordPress
     );
 
@@ -31,7 +32,6 @@ class Evvii_Cache {
         foreach ( $this->register_events as $event ) {
             add_action( $event, array( $this, 'prepare_flush' ), 10, 2 );
         }
-        // Register check event to see if a flush needs to be prepared
         // Register execute on shutdown
         add_action( 'shutdown', array( $this, 'execute_flush' ) );
         // Do we need to do a cache flush now?
