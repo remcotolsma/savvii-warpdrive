@@ -10,6 +10,7 @@ class Evvii_Cache {
         'edit_attachment',    // Runs when an attached file is edited/updated to the database.
         'switch_theme', // Runs when the blog's theme is changed.
         'generate_rewrite_rules', // Runs after the rewrite rules are generated.
+        'transition_comment_status', // Runs after comment changed state (approved, unapproved, trash, spam)
         // TODO: [6] Add Widget events when they are added to WordPress
     );
 
@@ -32,7 +33,6 @@ class Evvii_Cache {
         }
         // Register check event to see if a flush needs to be prepared
         add_action( 'comment_post', array( $this, 'wp_action_comment_post' ), 10, 999 );
-        add_action( 'transition_comment_status', array( $this, 'wp_transition_comment_status' ), 10, 999 );
         // Register execute on shutdown
         add_action( 'shutdown', array( $this, 'execute_flush' ) );
         // Do we need to do a cache flush now?
@@ -91,20 +91,6 @@ class Evvii_Cache {
         $args = func_get_args();
         // If second argument is set (approved status), set prepare flush
         if ( isset( $args[1] ) && 1 === $args[1] ) {
-            $this->flush_required = true;
-        }
-    }
-
-    /**
-     * Upon approve or unapprove of comment, this transition is called
-     * @param $new_status string New status of comment
-     * @param $old_status string Old status of comment
-     * @param $comment array Comment
-     * TODO: Test if action is called on comment edit
-     */
-    public function wp_transition_comment_status($new_status, $old_status, $comment) {
-        // If new status is approved, flag flush required
-        if ( 'approved' == $new_status ) {
             $this->flush_required = true;
         }
     }
