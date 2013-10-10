@@ -14,7 +14,7 @@ role :app, "nginx" # This may be the same as your `Web` server
 set :deploy_to, "/opt/savvii/#{application}"
 
 default_run_options[:pty] = true
-set :user, "ferdi"
+set :user, "deploy"
 set :ssh_options, { :forward_agent => true }
 set :use_sudo, false
 
