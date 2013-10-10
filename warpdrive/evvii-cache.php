@@ -32,7 +32,6 @@ class Evvii_Cache {
             add_action( $event, array( $this, 'prepare_flush' ), 10, 2 );
         }
         // Register check event to see if a flush needs to be prepared
-        add_action( 'comment_post', array( $this, 'wp_action_comment_post' ), 10, 999 );
         // Register execute on shutdown
         add_action( 'shutdown', array( $this, 'execute_flush' ) );
         // Do we need to do a cache flush now?
@@ -79,20 +78,6 @@ class Evvii_Cache {
             'title' => __( 'Flush cache', 'warpdrive' ),
             'href' => wp_nonce_url( admin_url( 'admin.php?page=warpdrive_dashboard&savvii_flush_now' ), 'warpdrive' ),
         ) );
-    }
-
-    /**
-     * Upon comment post, check if the comment has approved status.
-     * If it has approved status, flag flush required
-     * TODO: Test if action is called on comment edit
-     */
-    public function wp_action_comment_post() {
-        // Get arguments
-        $args = func_get_args();
-        // If second argument is set (approved status), set prepare flush
-        if ( isset( $args[1] ) && 1 === $args[1] ) {
-            $this->flush_required = true;
-        }
     }
 
     public function prepare_flush() {
