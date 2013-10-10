@@ -13,7 +13,7 @@ class WarpdriveReadLogs {
     /**
      * Singleton
      */
-    public function init() {
+    public static function init() {
         static $instance = null;
 
         if (!$instance) {
