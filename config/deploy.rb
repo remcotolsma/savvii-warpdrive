@@ -20,7 +20,7 @@ set :ssh_options, { :forward_agent => true }
 set :use_sudo, false
 
 # if you want to clean up old releases on each deploy uncomment this:
-after "deploy:restart", "deploy:cleanup"
+after "deploy:symlink", "deploy:cleanup"
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
@@ -66,4 +66,4 @@ namespace :deploy do
 end
 
 before 'deploy:update_code', "deploy:notify_start"
-after 'deploy:restart', 'deploy:notify_end'
+after 'deploy:symlink', 'deploy:notify_end'
