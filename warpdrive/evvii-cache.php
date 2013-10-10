@@ -108,6 +108,12 @@ class Evvii_Cache {
                 ),
             ) );
 
+            // On WP_Error, set flush failed and return
+            if ($result instanceof WP_Error) {
+                $this->flush_failed = true;
+                return;
+            }
+
             // Get return code from result
             $code = isset( $result['response'] ) ? ( isset( $result['response']['code'] ) ? $result['response']['code'] : 500 ) : 500;
 
