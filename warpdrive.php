@@ -368,11 +368,11 @@ class Warpdrive {
 ?>
             <form action="" method="post">
                 <label>
-                    <input type="radio" style="padding: 5px; margin: 0; vertical-align: middle;" name="<?php p(WARPDRIVE_FORM_CDN_ENABLED) ?>" value="1" <?php if ($cdn_enabled) p(' checked'); ?>/>
+                    <input type="radio" style="margin: 0;" name="<?php p(WARPDRIVE_FORM_CDN_ENABLED) ?>" value="1" <?php if ($cdn_enabled) p(' checked'); ?>/>
                     <?php _e('Enabled', 'warpdrive'); ?>
                 </label><br />
                 <label>
-                    <input type="radio" style="padding: 5px; margin: 0; vertical-align: middle;" name="<?php p(WARPDRIVE_FORM_CDN_ENABLED) ?>" value="0" <?php if (!$cdn_enabled) p(' checked'); ?>/>
+                    <input type="radio" style="margin: 0;" name="<?php p(WARPDRIVE_FORM_CDN_ENABLED) ?>" value="0" <?php if (!$cdn_enabled) p(' checked'); ?>/>
                     <?php _e('Disabled', 'warpdrive'); ?>
                 </label><br />
                 <input type="submit" value="<?php _e('Save CDN choice') ?>">
