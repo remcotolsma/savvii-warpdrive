@@ -8,7 +8,7 @@ set :branch, "master"
 # set :scm, :git # You can set :scm explicitly or Capistrano will make an intelligent guess based on known version control directory names
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 
-set :gateway, "provvii"
+set :gateway, "chef-server.savviihq.com"
 role :web, "nginx" # Your HTTP server, Apache/etc
 role :app, "nginx" # This may be the same as your `Web` server
 

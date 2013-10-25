@@ -3,7 +3,7 @@
  * Plugin name: Warpdrive
  * Plugin URI: http://www.savvii.nl
  * Description: Hosting plugin for Savvii
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: Ferdi van der Werf <ferdi@savvii.nl>
  * Author URI:
  * License: All rights remain with Savvii
@@ -368,11 +368,11 @@ class Warpdrive {
 ?>
             <form action="" method="post">
                 <label>
-                    <input type="radio" name="<?php p(WARPDRIVE_FORM_CDN_ENABLED) ?>" value="1" <?php if ($cdn_enabled) p(' checked'); ?>/>
+                    <input type="radio" style="margin: 0;" name="<?php p(WARPDRIVE_FORM_CDN_ENABLED) ?>" value="1" <?php if ($cdn_enabled) p(' checked'); ?>/>
                     <?php _e('Enabled', 'warpdrive'); ?>
                 </label><br />
                 <label>
-                    <input type="radio" name="<?php p(WARPDRIVE_FORM_CDN_ENABLED) ?>" value="0" <?php if (!$cdn_enabled) p(' checked'); ?>/>
+                    <input type="radio" style="margin: 0;" name="<?php p(WARPDRIVE_FORM_CDN_ENABLED) ?>" value="0" <?php if (!$cdn_enabled) p(' checked'); ?>/>
                     <?php _e('Disabled', 'warpdrive'); ?>
                 </label><br />
                 <input type="submit" value="<?php _e('Save CDN choice') ?>">
