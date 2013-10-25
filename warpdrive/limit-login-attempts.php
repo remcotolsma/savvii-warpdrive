@@ -3,7 +3,7 @@
  * Limit login attempts
  * Limit rate of login attempts, including by way of cookies, for each IP.
  * Based on: limit-login-attempts 1.7.1
- * 
+ *
  * @author Ferdi van der Werf <ferdi@savvii.nl>
  */
 
@@ -721,7 +721,7 @@ class WarpdriveLimitLoginAttempts {
      * Login
      **************************************************/
 
-    public function wp_login_success($login, $username) {
+    public function wp_login_success() {
 
         // Get IP
         $ip = $this->getIpAddress();
