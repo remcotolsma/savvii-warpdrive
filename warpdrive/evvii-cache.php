@@ -3,16 +3,24 @@
 class Evvii_Cache {
 
     private $register_events = array(
-        'publish_post', // Runs when a post is published, or if it is edited and its status is "published".
-        'trashed_post', // Runs just after a post or page is trashed.
-        'publish_page', // Runs when a page is published, or if it is edited and its status is "published".
-        'deleted_attachment', // Runs just before an attached file is deleted from the database.
-        'edit_attachment',    // Runs when an attached file is edited/updated to the database.
-        'switch_theme', // Runs when the blog's theme is changed.
-        'generate_rewrite_rules', // Runs after the rewrite rules are generated.
-        'transition_comment_status', // Runs after comment changed state (approved, unapproved, trash, spam)
-        'edit_comment', // Runs after comment is edited
-        // TODO: [6] Add Widget events when they are added to WordPress
+        // Run when a post is published, or if it is edited and its status is "published".
+        'publish_post',
+        // Run just after a post or page is trashed.
+        'trashed_post',
+        // Run when a page is published, or if it is edited and its status is "published".
+        'publish_page',
+        // Run just before an attached file is deleted from the database.
+        'deleted_attachment',
+        // Run when an attached file is edited/updated to the database.
+        'edit_attachment',
+        // Run when the blog's theme is changed.
+        'switch_theme',
+        // Run after the rewrite rules are generated.
+        'generate_rewrite_rules',
+        // Run after comment changed state (approved, unapproved, trash, spam)
+        'transition_comment_status',
+        // Run after comment is edited
+        'edit_comment',
     );
 
     private $flush_required = false;
@@ -73,11 +81,13 @@ class Evvii_Cache {
     public function admin_bar_init() {
         global $wp_admin_bar;
         // Add option to menu bar
-        $wp_admin_bar->add_menu( array(
-            'id' => 'evvii_cache_delete',
-            'title' => __( 'Flush cache', 'warpdrive' ),
-            'href' => wp_nonce_url( admin_url( 'admin.php?page=warpdrive_dashboard&savvii_flush_now' ), 'warpdrive' ),
-        ) );
+        $wp_admin_bar->add_menu(
+            array(
+                'id' => 'evvii_cache_delete',
+                'title' => __( 'Flush cache', 'warpdrive' ),
+                'href' => wp_nonce_url( admin_url( 'admin.php?page=warpdrive_dashboard&savvii_flush_now' ), 'warpdrive' ),
+            )
+        );
     }
 
     public function prepare_flush() {
@@ -88,7 +98,7 @@ class Evvii_Cache {
         if ( $forced || $this->flush_required ) {
             // Check if the token for Evvii is present
             $token = Warpdrive::get_option( WARPDRIVE_OPT_ACCESS_TOKEN );
-            if (is_null( $token ) ) {
+            if ( is_null( $token ) ) {
                 $this->flush_failed = true;
                 $this->flush_missing_token = true;
                 return;
@@ -99,17 +109,20 @@ class Evvii_Cache {
 
             // Call Evvii
             $http = new WP_Http();
-            $result = $http->request( $url, array(
-                'method' => 'DELETE',
-                'httpversion' => '1.1',
-                'sslverify' => false,
-                'headers' => array(
-                    'Authorization' => 'Token token="'.$token.'"',
-                ),
-            ) );
+            $result = $http->request(
+                $url,
+                array(
+                    'method' => 'DELETE',
+                    'httpversion' => '1.1',
+                    'sslverify' => false,
+                    'headers' => array(
+                        'Authorization' => 'Token token="'.$token.'"',
+                    ),
+                )
+            );
 
             // On WP_Error, set flush failed and return
-            if ($result instanceof WP_Error) {
+            if ( $result instanceof WP_Error ) {
                 $this->flush_failed = true;
                 return;
             }
