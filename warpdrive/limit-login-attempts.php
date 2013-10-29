@@ -911,7 +911,7 @@ class WarpdriveLimitLoginAttempts {
      * @param $password
      */
     public function trackCredentials( $username, $password ) {
-        $this->feNonEmptyCredentials = !empty( $username ) && !empty( $password );
+        $this->feNonEmptyCredentials = ! empty( $username ) && ! empty( $password );
     }
 
     /**************************************************
@@ -1222,8 +1222,8 @@ class WarpdriveLimitLoginAttempts {
      * Add submenus to Warpdrive
      */
     public function initAdminMenu() {
-        add_submenu_page( 'warpdrive_dashboard', __( 'Limit Login Attempts Options', 'warpdrive'), __('Limit Login Options', 'warpdrive'), 'manage_options', 'warpdrive_limitloginattempts', array( $this, 'pageOptions' ) );
-        add_submenu_page( 'warpdrive_dashboard', __( 'Limit Login Attempts Log', 'warpdrive'), __('Limit Login Log', 'warpdrive'), 'manage_options', 'warpdrive_limitloginattempts_log', array( $this, 'pageLog' ) );
+        add_submenu_page( 'warpdrive_dashboard', __( 'Limit Login Attempts Options', 'warpdrive' ), __( 'Limit Login Options', 'warpdrive' ), 'manage_options', 'warpdrive_limitloginattempts', array( $this, 'pageOptions' ) );
+        add_submenu_page( 'warpdrive_dashboard', __( 'Limit Login Attempts Log', 'warpdrive' ), __( 'Limit Login Log', 'warpdrive' ), 'manage_options', 'warpdrive_limitloginattempts_log', array( $this, 'pageLog' ) );
     }
 
     /**
@@ -1467,20 +1467,26 @@ class WarpdriveLimitLoginAttempts {
                             <td style="font-weight: bold"><?php _e( 'Lockouts', 'warpdrive' ); ?></td>
                             <td style="font-weight: bold"><?php _e( 'Last attempt', 'warpdrive' ); ?></td>
                         </tr>
-<?php   foreach ( $this->getList( 'lockoutLog' ) as $ip => $entry ) { ?>
+        <?php
+        foreach ( $this->getList( 'lockoutLog' ) as $ip => $entry ) {
+            ?>
                         <tr>
-                            <td><?php p($ip) ?></td>
+                            <td><?php p( $ip ) ?></td>
                             <td align="right"><?php p( $entry[1] ); ?>x</td>
                             <td align="right"><?php p( date( 'd-m-Y H:i', $entry[0] ) ) ?></td>
                         </tr>
-<?php       foreach ( $entry[2] as $user => $value ) { ?>
+            <?php
+            foreach ( $entry[2] as $user => $value ) {
+                ?>
                         <tr>
                             <td align="right">-></td>
                             <td align="right"><?php p( $value ) ?>x</td>
                             <td><?php p( $user ) ?></td>
                         </tr>
-<?php       } ?>
-<?php   } ?>
+                <?php
+            }
+        }
+        ?>
                     </table>
                 </td>
                 <td valign="top">
@@ -1490,12 +1496,16 @@ class WarpdriveLimitLoginAttempts {
                             <td style="font-weight: bold"><?php _e( 'Username', 'warpdrive' ); ?></td>
                             <td style="font-weight: bold"><?php _e( 'Lockouts', 'warpdrive' ); ?></td>
                         </tr>
-<?php   foreach ( $this->getList( 'lockoutLog-username' ) as $uname => $entry ) { ?>
+        <?php
+        foreach ( $this->getList( 'lockoutLog-username' ) as $uname => $entry ) {
+            ?>
                         <tr>
                             <td><?php p( $uname ) ?></td>
                             <td align="right"><?php p( $entry[1] ); ?>x</td>
                         </tr>
-<?php   } ?>
+            <?php
+        }
+        ?>
                     </table>
                 </td>
                 <!--
