@@ -16,7 +16,7 @@ class WarpdriveReadLogs {
     public static function init() {
         static $instance = null;
 
-        if (!$instance) {
+        if ( ! $instance ) {
             $instance = new WarpdriveReadLogs;
         }
     }
@@ -76,12 +76,12 @@ class WarpdriveReadLogs {
         // Create file regexps
         $file_regexp = null;
         $name = null;
-        if ( $_GET['file'] == "access" ) {
+        if ( $_GET['file'] == 'access' ) {
             $name = __( 'Access log', 'warpdrive' );
-            $file_regexp = ABSPATH . "../log/*.access.log";
-        } else if( $_GET['file'] == "error" ) {
+            $file_regexp = ABSPATH . '../log/*.access.log';
+        } else if ( $_GET['file'] == 'error' ) {
             $name = __( 'Error log', 'warpdrive' );
-            $file_regexp = ABSPATH . "../log/*.error.log";
+            $file_regexp = ABSPATH . '../log/*.error.log';
         }
 
         // No file selected, quit
@@ -90,7 +90,7 @@ class WarpdriveReadLogs {
 
         // How many lines to read?
         $lines = 10;
-        switch( $_GET['lines'] ) {
+        switch ( $_GET['lines'] ) {
             case '10':
             case '100':
                 $lines = intval( $_GET['lines'] );
@@ -100,7 +100,7 @@ class WarpdriveReadLogs {
         $bytes = $lines * self::$LOG_LINE_SIZE;
 
         $files = glob( $file_regexp );
-        if (is_array( $files ) && count( $files ) > 0 && @file_exists( $files[0] ) ) {
+        if ( is_array( $files ) && count( $files ) > 0 && @file_exists( $files[0] ) ) {
             // Use first file
             $file = $files[0];
 
@@ -127,13 +127,12 @@ class WarpdriveReadLogs {
             if ( $total_lines ) {
                 p_raw( '<ol>' );
                 foreach ( $file_lines as $line ) {
-                    printf( "<li>%s</li>", h( $line ) );
+                    printf( '<li>%s</li>', h( $line ) );
                 }
                 p_raw( '</ol>' );
             } else {
                 printf( '<p style="padding:  5px; color: #D00;">%s</p>', __( 'No content in log', 'warpdrive' ) );
             }
-
         } else {
             p_raw( '<p style="color: #D00; font-weight: bold;">File not found! Please contact <a href="http://support.savvii.nl/" target="_blank">support</a>.</p>' );
         }
