@@ -33,7 +33,7 @@ function h( $text ) {
 
 /**
  * Format a number according to localization options
- * @param int $n Number to format
+ * @param int $num Number to format
  * @param int $decimals Decimals of the number
  * @return string Formatted number
  */
@@ -99,7 +99,7 @@ class Warpdrive {
      * Constructor
      * Initializes WordPress hooks
      */
-    function Warpdrive() {
+    function __construct() {
         // Add plugin to menu and put it on top
         add_action( 'admin_menu', array( $this, 'admin_menu_init' ) );
         // Menu filters
@@ -170,6 +170,7 @@ class Warpdrive {
      * @return bool
      */
     public static function delete_option( $name ) {
+
         if ( Warpdrive::is_multisite() ) {
             return delete_site_option( $name );
         } else {
@@ -182,6 +183,7 @@ class Warpdrive {
      * @static
      * @param string $name Name of the option
      * @param mixed $value New value of the option
+     * @return bool True on success
      */
     public static function update_option( $name, $value ) {
         if ( Warpdrive::is_multisite() ) {
@@ -197,6 +199,7 @@ class Warpdrive {
     public static function load_modules() {
         // Load waprdrive.evvii-token
         $token = Warpdrive::get_option( WARPDRIVE_OPT_ACCESS_TOKEN );
+
         // If token exists, show Evvii menu options
         if ( ! is_null( $token ) ) {
             // Include purge cache module
@@ -263,7 +266,7 @@ class Warpdrive {
         $url = WARPDRIVE_EVVII_LOCATION.'/v1/site?access_token='.$token;
 
         // Call Evvii
-        $http = new WP_Http();
+        $http   = new WP_Http();
         $result = $http->request(
             $url,
             array(

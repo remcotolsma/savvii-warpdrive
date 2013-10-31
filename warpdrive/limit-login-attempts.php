@@ -91,7 +91,7 @@ class WarpdriveLimitLoginAttempts {
     /**
      * Constructor
      */
-    public function WarpdriveLimitLoginAttempts() {
+    public function __construct() {
         // Language file loaded by main plugin
 
         // Load options
