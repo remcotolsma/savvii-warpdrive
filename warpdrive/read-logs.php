@@ -16,7 +16,7 @@ class WarpdriveReadLogs {
     public static function init() {
         static $instance = null;
 
-        if (!$instance) {
+        if ( ! $instance ) {
             $instance = new WarpdriveReadLogs;
         }
     }
@@ -24,7 +24,7 @@ class WarpdriveReadLogs {
     /**
      * Constructor
      */
-    public function WarpdriveReadLogs() {
+    public function __construct() {
         // Add module menu items to warpdrive menu
         add_action( 'admin_menu', array( $this, 'admin_menu_init' ) );
     }
@@ -36,7 +36,7 @@ class WarpdriveReadLogs {
             __( 'Read server logs', 'warpdrive' ), // Menu title
             'manage_options', // Capability
             'warpdrive_readlogs', // Menu slug
-            array( $this, 'readlogs_page') // Callback
+            array( $this, 'readlogs_page' ) // Callback
         );
     }
 
@@ -76,12 +76,15 @@ class WarpdriveReadLogs {
         // Create file regexps
         $file_regexp = null;
         $name = null;
-        if ( $_GET['file'] == "access" ) {
-            $name = __( 'Access log', 'warpdrive' );
-            $file_regexp = ABSPATH . "../log/*.access.log";
-        } else if( $_GET['file'] == "error" ) {
-            $name = __( 'Error log', 'warpdrive' );
-            $file_regexp = ABSPATH . "../log/*.error.log";
+        if ( isset( $_GET['file'] ) ) {
+
+            if ( $_GET['file'] == 'access' ) {
+                $name = __( 'Access log', 'warpdrive' );
+                $file_regexp = ABSPATH . '../log/*.access.log';
+            } else if ( $_GET['file'] == 'error' ) {
+                $name = __( 'Error log', 'warpdrive' );
+                $file_regexp = ABSPATH . '../log/*.error.log';
+            }
         }
 
         // No file selected, quit
@@ -90,7 +93,7 @@ class WarpdriveReadLogs {
 
         // How many lines to read?
         $lines = 10;
-        switch( $_GET['lines'] ) {
+        switch ( $_GET['lines'] ) {
             case '10':
             case '100':
                 $lines = intval( $_GET['lines'] );
@@ -100,16 +103,16 @@ class WarpdriveReadLogs {
         $bytes = $lines * self::$LOG_LINE_SIZE;
 
         $files = glob( $file_regexp );
-        if (is_array( $files ) && count( $files ) > 0 && @file_exists( $files[0] ) ) {
+        if ( is_array( $files ) && count( $files ) > 0 && @file_exists( $files[0] ) ) {
             // Use first file
             $file = $files[0];
 
             // Get last $bytes bytes from file
             $file_size = filesize( $file );
-            $offset = $file_size - $bytes;
+            $offset    = $file_size - $bytes;
             if ( $offset < 0 ) {
                 $offset = 0;
-                $bytes = $file_size;
+                $bytes  = $file_size;
             }
 
             // Get contents as array, split on line ending
@@ -119,7 +122,7 @@ class WarpdriveReadLogs {
             array_pop( $file_lines );
 
             // Get slice of array we want, reverse it to have last line first in array
-            $file_lines = array_reverse( array_slice( $file_lines, -1 * $lines ) );
+            $file_lines  = array_reverse( array_slice( $file_lines, -1 * $lines ) );
             $total_lines = count( $file_lines );
 
             // Iterate over lines and print them
@@ -127,13 +130,12 @@ class WarpdriveReadLogs {
             if ( $total_lines ) {
                 p_raw( '<ol>' );
                 foreach ( $file_lines as $line ) {
-                    printf( "<li>%s</li>", h( $line ) );
+                    printf( '<li>%s</li>', h( $line ) );
                 }
                 p_raw( '</ol>' );
             } else {
                 printf( '<p style="padding:  5px; color: #D00;">%s</p>', __( 'No content in log', 'warpdrive' ) );
             }
-
         } else {
             p_raw( '<p style="color: #D00; font-weight: bold;">File not found! Please contact <a href="http://support.savvii.nl/" target="_blank">support</a>.</p>' );
         }
