@@ -36,7 +36,7 @@ class WarpdriveReadLogs {
             __( 'Read server logs', 'warpdrive' ), // Menu title
             'manage_options', // Capability
             'warpdrive_readlogs', // Menu slug
-            array( $this, 'readlogs_page') // Callback
+            array( $this, 'readlogs_page' ) // Callback
         );
     }
 
@@ -109,10 +109,10 @@ class WarpdriveReadLogs {
 
             // Get last $bytes bytes from file
             $file_size = filesize( $file );
-            $offset = $file_size - $bytes;
+            $offset    = $file_size - $bytes;
             if ( $offset < 0 ) {
                 $offset = 0;
-                $bytes = $file_size;
+                $bytes  = $file_size;
             }
 
             // Get contents as array, split on line ending
@@ -122,7 +122,7 @@ class WarpdriveReadLogs {
             array_pop( $file_lines );
 
             // Get slice of array we want, reverse it to have last line first in array
-            $file_lines = array_reverse( array_slice( $file_lines, -1 * $lines ) );
+            $file_lines  = array_reverse( array_slice( $file_lines, -1 * $lines ) );
             $total_lines = count( $file_lines );
 
             // Iterate over lines and print them
