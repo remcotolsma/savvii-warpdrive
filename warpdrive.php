@@ -170,6 +170,7 @@ class Warpdrive {
      * @return bool
      */
     public static function delete_option( $name ) {
+
         if ( Warpdrive::is_multisite() ) {
             return delete_site_option( $name );
         } else {
@@ -263,7 +264,7 @@ class Warpdrive {
         $url = WARPDRIVE_EVVII_LOCATION.'/v1/site?access_token='.$token;
 
         // Call Evvii
-        $http = new WP_Http();
+        $http   = new WP_Http();
         $result = $http->request(
             $url,
             array(
