@@ -24,7 +24,7 @@ class WarpdriveReadLogs {
     /**
      * Constructor
      */
-    public function WarpdriveReadLogs() {
+    public function __construct() {
         // Add module menu items to warpdrive menu
         add_action( 'admin_menu', array( $this, 'admin_menu_init' ) );
     }

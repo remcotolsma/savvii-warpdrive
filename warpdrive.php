@@ -99,7 +99,7 @@ class Warpdrive {
      * Constructor
      * Initializes WordPress hooks
      */
-    function Warpdrive() {
+    function __construct() {
         // Add plugin to menu and put it on top
         add_action( 'admin_menu', array( $this, 'admin_menu_init' ) );
         // Menu filters
