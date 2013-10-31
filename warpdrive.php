@@ -33,7 +33,7 @@ function h( $text ) {
 
 /**
  * Format a number according to localization options
- * @param int $n Number to format
+ * @param int $num Number to format
  * @param int $decimals Decimals of the number
  * @return string Formatted number
  */
@@ -183,6 +183,7 @@ class Warpdrive {
      * @static
      * @param string $name Name of the option
      * @param mixed $value New value of the option
+     * @return bool True on success
      */
     public static function update_option( $name, $value ) {
         if ( Warpdrive::is_multisite() ) {
@@ -198,6 +199,7 @@ class Warpdrive {
     public static function load_modules() {
         // Load waprdrive.evvii-token
         $token = Warpdrive::get_option( WARPDRIVE_OPT_ACCESS_TOKEN );
+
         // If token exists, show Evvii menu options
         if ( ! is_null( $token ) ) {
             // Include purge cache module
