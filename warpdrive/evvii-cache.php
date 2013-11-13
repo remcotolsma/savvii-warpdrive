@@ -99,7 +99,6 @@ class Evvii_Cache {
     public function __call($name, $arguments) {
         if ( strncmp( 'prepare_flush_', $name, 14 ) === 0 ) {
             do_action( 'warpdrive_'.$name );
-            error_log( 'warpdrive_'.$name );
             $this->flush_required = true;
         }
     }
