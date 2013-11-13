@@ -15,8 +15,6 @@ class Evvii_Cache {
         'edit_attachment',
         // Run when the blog's theme is changed.
         'switch_theme',
-        // Run after the rewrite rules are generated.
-        'generate_rewrite_rules',
         // Run after comment changed state (approved, unapproved, trash, spam)
         'transition_comment_status',
         // Run after comment is edited
