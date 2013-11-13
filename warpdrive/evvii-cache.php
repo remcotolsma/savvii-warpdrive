@@ -38,7 +38,8 @@ class Evvii_Cache {
     public function init() {
         // Register flush event for required events
         foreach ( $this->register_events as $event ) {
-            add_action( $event, array( $this, 'prepare_flush' ), 10, 2 );
+            //add_action( $event, array( $this, 'prepare_flush' ), 10, 2 );
+            add_action( $event, array( $this, 'prepare_flush_'.$event ), 10, 2 );
         }
         // Register execute on shutdown
         add_action( 'shutdown', array( $this, 'execute_flush' ) );
@@ -91,11 +92,20 @@ class Evvii_Cache {
     }
 
     public function prepare_flush() {
+        do_action( 'warpdrive_prepare_flush' );
         $this->flush_required = true;
+    }
+
+    public function __call($name, $arguments) {
+        if ( strncmp( 'prepare_flush_', $name, 14 ) === 0 ) {
+            do_action( 'warpdrive_'.$name );
+            $this->flush_required = true;
+        }
     }
 
     public function execute_flush( $forced = false ) {
         if ( $forced || $this->flush_required ) {
+            do_action( 'warpdrive_execute_flush' );
             // Check if the token for Evvii is present
             $token = Warpdrive::get_option( WARPDRIVE_OPT_ACCESS_TOKEN );
             if ( is_null( $token ) ) {
