@@ -35,8 +35,9 @@ class WarpdriveCdn {
         $paths = "{$this->get_site_path()}(wp-content|{$wp_inc})/";
         $basename   = "[^\"']+";
         $extensions = '\.(css|js|gif|png|jpg|xml|ico|ttf|otf|woff)';
+        $version    = '[a-zA-Z0-9?=\.\-]*';
 
-        $regexp = "~({$scheme})({$domain})({$paths}{$basename}{$extensions})~";
+        $regexp = "~({$scheme})({$domain})({$paths}{$basename}{$extensions})({$version})~";
 
         // Prepare cdn replacement
         $replace = "$1$2$3";
