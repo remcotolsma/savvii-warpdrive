@@ -72,7 +72,7 @@ class Evvii_Cache {
 
         ?>
         <div class="updated">
-            <p><?php _e( '<strong>Note: </strong>When changing widgets, flush is not automatically cleared! Use Flush now in admin bar when you finished editing widgets.', 'warpdrive' ); ?></p>
+            <p><?php _e( '<strong>Note: </strong>When changing widgets, cache is not automatically cleared! Use \'Flush cache\' in admin bar when you finished editing widgets.', 'warpdrive' ); ?></p>
         </div>
         <?php
     }
