@@ -73,22 +73,29 @@ class WarpdriveReadLogs {
         </table>
         <?php
 
+        // Get site name
+        $site_name = Warpdrive::get_option( WARPDRIVE_OPT_SITE_NAME );
+        if ( is_null( $site_name ) ) {
+            ?><h2>Access token needs to be set before logs can be read.</h2><?php
+            return;
+        }
+
         // Create file regexps
-        $file_regexp = null;
+        $file_location = null;
         $name = null;
         if ( isset( $_GET['file'] ) ) {
 
             if ( $_GET['file'] == 'access' ) {
                 $name = __( 'Access log', 'warpdrive' );
-                $file_regexp = ABSPATH . '../log/*.access.log';
+                $file_location = "/var/www/{$site_name}/log/{$site_name}.access.log";
             } else if ( $_GET['file'] == 'error' ) {
                 $name = __( 'Error log', 'warpdrive' );
-                $file_regexp = ABSPATH . '../log/*.error.log';
+                $file_location = "/var/www/{$site_name}/log/{$site_name}.error.log";
             }
         }
 
         // No file selected, quit
-        if ( ! $file_regexp )
+        if ( is_null( $file_location ) )
             return;
 
         // How many lines to read?
@@ -102,13 +109,9 @@ class WarpdriveReadLogs {
         // How many bytes to read?
         $bytes = $lines * self::$LOG_LINE_SIZE;
 
-        $files = glob( $file_regexp );
-        if ( is_array( $files ) && count( $files ) > 0 && @file_exists( $files[0] ) ) {
-            // Use first file
-            $file = $files[0];
-
+        if ( file_exists( $file_location ) ) {
             // Get last $bytes bytes from file
-            $file_size = filesize( $file );
+            $file_size = filesize( $file_location );
             $offset    = $file_size - $bytes;
             if ( $offset < 0 ) {
                 $offset = 0;
@@ -116,7 +119,7 @@ class WarpdriveReadLogs {
             }
 
             // Get contents as array, split on line ending
-            $file_lines = explode( "\n", @file_get_contents( $file, null, null, $offset, $bytes ) );
+            $file_lines = explode( "\n", @file_get_contents( $file_location, null, null, $offset, $bytes ) );
 
             // Remove last entry (it is empty)
             array_pop( $file_lines );
