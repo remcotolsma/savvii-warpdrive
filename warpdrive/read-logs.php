@@ -73,6 +73,13 @@ class WarpdriveReadLogs {
         </table>
         <?php
 
+        // Get site name
+        $site_name = Warpdrive::get_option( WARPDRIVE_OPT_SITE_NAME );
+        if ( is_null( $site_name ) ) {
+            ?><h2>Access token needs to be set before logs can be read.</h2><?php
+            return;
+        }
+
         // Create file regexps
         $file_regexp = null;
         $name = null;
